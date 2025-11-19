@@ -318,6 +318,12 @@
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = currentLang;
             
+            // Update Home Screen Button Text
+            const homeLangText = document.getElementById('home-lang-text');
+            if (homeLangText) {
+                homeLangText.textContent = currentLang === 'en' ? 'العربية' : 'English';
+            }
+
             // Update UI Texts
             updateUITexts();
             
@@ -664,11 +670,21 @@
                 <!-- HOME VIEW -->
                 <div id="home-view" class="app-view h-full flex p-8 lg:p-12 gap-12 animate-fade-in relative z-10">
                     
-                    <!-- HOME NAME BADGE (Absolute, Logical Placement) -->
-                    <div class="absolute top-8 right-12 rtl:right-auto rtl:left-12 flex items-center gap-3 z-20">
-                        <span class="text-2xl font-light tracking-wide font-serif text-white">بيت أحمد</span>
-                        <div class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
-                            <i data-lucide="home" class="w-6 h-6 text-[var(--color-primary)]"></i>
+                    <!-- TOP RIGHT CLUSTER: LANGUAGE TOGGLE & HOME NAME BADGE -->
+                    <div class="absolute top-8 right-12 rtl:right-auto rtl:left-12 flex items-center gap-6 z-20">
+                        
+                        <!-- Language Toggle Button -->
+                        <button onclick="toggleLanguage()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition text-white group cursor-pointer">
+                            <i data-lucide="globe" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                            <span id="home-lang-text" class="text-sm font-medium">العربية</span>
+                        </button>
+
+                        <!-- Home Name Badge -->
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl font-light tracking-wide font-serif text-white">بيت أحمد</span>
+                            <div class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
+                                <i data-lucide="home" class="w-6 h-6 text-[var(--color-primary)]"></i>
+                            </div>
                         </div>
                     </div>
 
