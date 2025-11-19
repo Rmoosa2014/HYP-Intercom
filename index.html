@@ -32,7 +32,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Disable default touch actions for swipe gestures */
             touch-action: none; 
         }
 
@@ -95,6 +94,15 @@
         }
         .animate-fade-in {
             animation: fade-in 0.4s ease-out forwards;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(50, 181, 169, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(50, 181, 169, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(50, 181, 169, 0); }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
         /* Quick Settings Panel Animation */
@@ -181,6 +189,15 @@
              border-left-color: transparent;
         }
 
+        /* Intercom Unit Item */
+        .intercom-unit-item {
+            transition: all 0.2s;
+        }
+        .intercom-unit-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.02);
+        }
+
         /* Range Slider Styling */
         input[type=range] {
             -webkit-appearance: none;
@@ -205,128 +222,101 @@
             border-radius: 2px;
         }
 
-        /* Date Picker Styling */
-        input[type="date"], input[type="time"] {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+        /* Calendar Styling */
+        .calendar-cell {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .calendar-cell:not(.disabled):hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .calendar-cell.active-date {
+            background-color: var(--color-primary);
             color: white;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            color-scheme: dark;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(50, 181, 169, 0.5);
+        }
+        .calendar-cell.today {
+            border: 2px solid var(--color-primary);
         }
 
         .text-shadow { text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         
+        /* Custom Scrollbar for dark theme */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+        /* Settings Input Style */
+        .settings-input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color-scheme: dark;
+            transition: all 0.2s;
+        }
+        .settings-input:focus {
+            border-color: var(--color-primary);
+            outline: none;
+        }
     </style>
 
     <script>
         // --- Localization Data ---
         const TRANSLATIONS = {
             en: {
-                quickAccess: "Quick Access",
-                locked: "Locked",
-                unlocked: "Unlocked",
-                monitoring: "Monitoring",
-                liveView: "Live View",
-                logs: "Logs",
-                settings: "Settings",
-                scene: "Scene",
-                nightMode: "Night Mode",
-                mainEntrance: "Main Entrance",
-                sideGate: "Side Gate",
-                frontDoor: "Front Door",
-                system: "System",
-                configuration: "Configuration",
-                cameras: "Cameras",
-                back: "Back",
-                systemOnline: "System Online • 4 Cameras",
-                talk: "Talk",
-                decline: "Decline",
-                answer: "Answer",
-                incomingCall: "Incoming Call...",
-                activityLogs: "Activity Logs",
-                recentEvents: "Recent events and notifications",
-                all: "All",
-                alerts: "Alerts",
-                calls: "Calls",
-                info: "System",
-                displayingRecent: "Displaying recent events from the last 7 days",
-                general: "General",
-                network: "Network",
-                display: "Display",
-                about: "About",
-                backHome: "Back to Home",
-                deviceName: "Device Name",
-                language: "Language",
-                doNotDisturb: "Do Not Disturb",
-                timezone: "Timezone",
-                statusArmed: "System Armed",
-                statusSensors: "All sensors active",
-                notifications: "Notifications",
-                newEvents: "New events",
-                mostlySunny: "Mostly Sunny",
-                riyadh: "Riyadh, KSA",
-                wifi: "Wi-Fi",
-                brightness: "Brightness",
-                volume: "Volume",
-                quickSettings: "Quick Settings",
-                fromDate: "From",
-                time: "Time"
+                quickAccess: "Quick Access", locked: "Locked", unlocked: "Unlocked", monitoring: "Monitoring", liveView: "Live View",
+                logs: "Logs", settings: "Settings", intercom: "Intercom", mainEntrance: "Main Entrance", sideGate: "Side Gate",
+                frontDoor: "Front Door", system: "System", configuration: "Configuration", cameras: "Cameras", back: "Back",
+                systemOnline: "System Online • 4 Cameras", talk: "Talk", decline: "Decline", answer: "Answer", incomingCall: "Incoming Call...",
+                activityLogs: "Activity Logs", recentEvents: "Recent events and notifications", all: "All", alerts: "Alerts",
+                calls: "Calls", info: "System", displayingRecent: "Displaying recent events from the last 7 days", general: "General",
+                network: "Network", display: "Display", about: "About", backHome: "Back to Home", deviceName: "Device Name",
+                language: "Language", doNotDisturb: "Do Not Disturb", timezone: "Timezone", statusArmed: "System Armed",
+                statusSensors: "All sensors active", notifications: "Notifications", newEvents: "New events", mostlySunny: "Mostly Sunny",
+                riyadh: "Riyadh, KSA", wifi: "Wi-Fi", brightness: "Brightness", volume: "Volume", quickSettings: "Quick Settings",
+                selectUnit: "Select Unit", calling: "Calling...", connected: "Connected", endCall: "End Call", mute: "Mute",
+                livingRoom: "Living Room", masterBedroom: "Master Bedroom", kitchen: "Kitchen", guestRoom: "Guest Room",
+                // New Keys for Settings
+                networkSettings: "Network Settings", ipAddress: "IP Address", gateway: "Gateway", dns: "DNS Server", connectionStatus: "Status",
+                displaySettings: "Display Settings", theme: "Theme", light: "Light", dark: "Dark", auto: "Auto", 
+                screenTimeout: "Screen Timeout", alwaysOn: "Always On", aboutSettings: "About Device", softwareVersion: "Software Version",
+                hardwareModel: "Hardware Model", serialNumber: "Serial Number", lastUpdate: "Last Update", checkUpdate: "Check for Update",
+                updateAvailable: "Update Available", upToDate: "Up to Date", 
+                // New Keys for Calendar/History
+                selectDate: "Select Date", calendar: "Calendar", today: "Today",
+                sun: "Sun", mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat",
             },
             ar: {
-                quickAccess: "الوصول السريع",
-                locked: "مغلق",
-                unlocked: "مفتوح",
-                monitoring: "مراقبة",
-                liveView: "بث مباشر",
-                logs: "السجلات",
-                settings: "الإعدادات",
-                scene: "سيناريو",
-                nightMode: "الوضع الليلي",
-                mainEntrance: "المدخل الرئيسي",
-                sideGate: "البوابة الجانبية",
-                frontDoor: "الباب الأمامي",
-                system: "النظام",
-                configuration: "التكوين",
-                cameras: "الكاميرات",
-                back: "رجوع",
-                systemOnline: "النظام متصل • 4 كاميرات",
-                talk: "تحدث",
-                decline: "رفض",
-                answer: "إجابة",
-                incomingCall: "مكالمة واردة...",
-                activityLogs: "سجل النشاطات",
-                recentEvents: "الأحداث والإشعارات الأخيرة",
-                all: "الكل",
-                alerts: "تنبيهات",
-                calls: "مكالمات",
-                info: "النظام",
-                displayingRecent: "عرض الأحداث من الأيام السبعة الماضية",
-                general: "عام",
-                network: "الشبكة",
-                display: "الشاشة",
-                about: "حول",
-                backHome: "العودة للرئيسية",
-                deviceName: "اسم الجهاز",
-                language: "اللغة",
-                doNotDisturb: "عدم الإزعاج",
-                timezone: "المنطقة الزمنية",
-                statusArmed: "النظام مفعل",
-                statusSensors: "جميع الحساسات نشطة",
-                notifications: "الإشعارات",
-                newEvents: "أحداث جديدة",
-                mostlySunny: "مشمس غالباً",
-                riyadh: "الرياض، السعودية",
-                wifi: "واي فاي",
-                brightness: "السطوع",
-                volume: "مستوى الصوت",
-                quickSettings: "الإعدادات السريعة",
-                fromDate: "من تاريخ",
-                time: "الوقت"
+                quickAccess: "الوصول السريع", locked: "مغلق", unlocked: "مفتوح", monitoring: "مراقبة", liveView: "بث مباشر",
+                logs: "السجلات", settings: "الإعدادات", intercom: "الاتصال الداخلي", mainEntrance: "المدخل الرئيسي", sideGate: "البوابة الجانبية",
+                frontDoor: "الباب الأمامي", system: "النظام", configuration: "التكوين", cameras: "الكاميرات", back: "رجوع",
+                systemOnline: "النظام متصل • 4 كاميرات", talk: "تحدث", decline: "رفض", answer: "إجابة", incomingCall: "مكالمة واردة...",
+                activityLogs: "سجل النشاطات", recentEvents: "الأحداث والإشعارات الأخيرة", all: "الكل", alerts: "تنبيهات",
+                calls: "مكالمات", info: "النظام", displayingRecent: "عرض الأحداث من الأيام السبعة الماضية", general: "عام",
+                network: "الشبكة", display: "الشاشة", about: "حول", backHome: "العودة للرئيسية", deviceName: "اسم الجهاز",
+                language: "اللغة", doNotDisturb: "عدم الإزعاج", timezone: "المنطقة الزمنية", statusArmed: "النظام مفعل",
+                statusSensors: "جميع الحساسات نشطة", notifications: "الإشعارات", newEvents: "أحداث جديدة", mostlySunny: "مشمس غالباً",
+                riyadh: "الرياض، السعودية", wifi: "واي فاي", brightness: "السطوع", volume: "مستوى الصوت", quickSettings: "الإعدادات السريعة",
+                selectUnit: "اختر الوحدة", calling: "جاري الاتصال...", connected: "متصل", endCall: "إنهاء المكالمة", mute: "كتم الصوت",
+                livingRoom: "غرفة المعيشة", masterBedroom: "غرفة النوم الرئيسية", kitchen: "المطبخ", guestRoom: "غرفة الضيوف",
+                // New Keys for Settings
+                networkSettings: "إعدادات الشبكة", ipAddress: "عنوان IP", gateway: "البوابة", dns: "خادم DNS", connectionStatus: "الحالة",
+                displaySettings: "إعدادات العرض", theme: "السمة", light: "فاتح", dark: "داكن", auto: "تلقائي", 
+                screenTimeout: "مهلة الشاشة", alwaysOn: "تشغيل دائم", aboutSettings: "حول الجهاز", softwareVersion: "إصدار البرنامج",
+                hardwareModel: "طراز الجهاز", serialNumber: "الرقم التسلسلي", lastUpdate: "آخر تحديث", checkUpdate: "التحقق من التحديث",
+                updateAvailable: "تحديث متاح", upToDate: "محدث بالكامل",
+                // New Keys for Calendar/History
+                selectDate: "اختر التاريخ", calendar: "التقويم", today: "اليوم",
+                sun: "الأحد", mon: "الاثنين", tue: "الثلاثاء", wed: "الأربعاء", thu: "الخميس", fri: "الجمعة", sat: "السبت",
             }
         };
 
@@ -336,6 +326,10 @@
         let isCalling = false;
         let isMuted = true;
         let isQuickSettingsOpen = false;
+        let intercomCallTimer = null;
+        let intercomSeconds = 0;
+        let currentCalendarDate = new Date();
+        let selectedLogDate = new Date().toDateString(); // The date currently selected in the calendar
 
         const CAMERA_FEEDS = {
             'door1': { name: 'Main Entrance', url: 'https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/HYP_INTERCOM.mp4' },
@@ -343,18 +337,25 @@
             'ipc': { name: 'Backyard', url: 'https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/RimLock.mp4' },
             'living': { name: 'Living Room', url: 'https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/Camera2.mp4' }
         };
-        // Array for easy cycling
         const CAMERA_KEYS = Object.keys(CAMERA_FEEDS);
         let activeCameraId = CAMERA_KEYS[0];
 
         const MOCK_LOGS = [
-            { id: 1, type: 'alert', title: 'Motion Detected', source: 'Backyard Camera', time: 'Just now', icon: 'footprints', color: 'text-orange-400' },
-            { id: 2, type: 'info', title: 'Door Unlocked', source: 'Main Entrance', time: '12 mins ago', icon: 'unlock', color: 'text-green-400' },
-            { id: 3, type: 'call', title: 'Missed Call', source: 'Front Gate Intercom', time: '1 hour ago', icon: 'phone-missed', color: 'text-red-400' },
-            { id: 4, type: 'info', title: 'System Armed', source: 'Automated Routine', time: '08:30 AM', icon: 'shield-check', color: 'text-blue-400' },
-            { id: 5, type: 'alert', title: 'Package Detected', source: 'Side Gate', time: 'Yesterday', icon: 'box', color: 'text-yellow-400' },
-            { id: 6, type: 'info', title: 'Door Locked', source: 'Garage Gate', time: 'Yesterday', icon: 'lock', color: 'text-white' },
-            { id: 7, type: 'info', title: 'WiFi Reconnected', source: 'System', time: '2 days ago', icon: 'wifi', color: 'text-gray-400' },
+            { id: 1, type: 'alert', title: 'Motion Detected', source: 'Backyard Camera', time: '14:30', date: new Date().toDateString(), icon: 'footprints', color: 'text-orange-400' },
+            { id: 2, type: 'info', title: 'Door Unlocked', source: 'Main Entrance', time: '12:15', date: new Date().toDateString(), icon: 'unlock', color: 'text-green-400' },
+            { id: 3, type: 'call', title: 'Missed Call', source: 'Front Gate Intercom', time: '10:00', date: new Date().toDateString(), icon: 'phone-missed', color: 'text-red-400' },
+            { id: 4, type: 'info', title: 'System Armed', source: 'Automated Routine', time: '08:30', date: new Date().toDateString(), icon: 'shield-check', color: 'text-blue-400' },
+            { id: 5, type: 'alert', title: 'Package Detected', source: 'Side Gate', time: '16:00', date: new Date(Date.now() - 86400000).toDateString(), icon: 'box', color: 'text-yellow-400' },
+            { id: 6, type: 'info', title: 'Door Locked', source: 'Garage Gate', time: '18:00', date: new Date(Date.now() - 86400000).toDateString(), icon: 'lock', color: 'text-white' },
+            { id: 7, type: 'info', title: 'WiFi Reconnected', source: 'System', time: '09:00', date: new Date(Date.now() - 86400000 * 2).toDateString(), icon: 'wifi', color: 'text-gray-400' },
+        ].sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+
+        // Intercom Units
+        const INTERCOM_UNITS = [
+            { id: 'living', nameKey: 'livingRoom', icon: 'sofa' },
+            { id: 'master', nameKey: 'masterBedroom', icon: 'bed-double' },
+            { id: 'kitchen', nameKey: 'kitchen', icon: 'coffee' }, // Using coffee instead of chef-hat
+            { id: 'guest', nameKey: 'guestRoom', icon: 'users' }
         ];
 
         // Utils
@@ -369,8 +370,10 @@
             if (homeLangText) homeLangText.textContent = currentLang === 'en' ? 'العربية' : 'English';
             updateUITexts();
             renderSettings('general'); 
-            renderHistory('all');
+            renderHistory('all', selectedLogDate);
+            renderCalendar(currentCalendarDate); 
             updateMonitorList();
+            renderIntercomList(); 
         };
 
         const updateUITexts = () => {
@@ -394,23 +397,19 @@
             if(msgCount) msgCount.textContent = Math.floor(Math.random() * 2) + 1;
         };
 
-        // --- Touch / Swipe Logic ---
-        let touchStartY = 0;
-        let touchEndY = 0;
-        let touchStartX = 0;
-        let touchEndX = 0;
-
+        // --- Init & Handlers ---
         document.addEventListener('DOMContentLoaded', () => {
             renderIcons();
             updateTimeAndWeather();
             updateMonitorList();
             updateMuteButton();
-            renderHistory('all'); 
-            renderSettings('general'); 
+            renderCalendar(currentCalendarDate);
+            renderHistory('all', selectedLogDate); 
+            renderSettings('general');
+            renderIntercomList();
             updateUITexts(); 
             setInterval(updateTimeAndWeather, 1000);
-
-            // Global Swipe Down Listener (for Quick Settings)
+            
             const appContainer = document.getElementById('app-container');
             appContainer.addEventListener('touchstart', e => touchStartY = e.changedTouches[0].screenY, {passive: true});
             appContainer.addEventListener('touchend', e => {
@@ -419,12 +418,16 @@
             }, {passive: true});
         });
 
+        // --- Swipe/Touch Logic (Kept for continuity) ---
+        let touchStartY = 0;
+        let touchEndY = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
+
         function handleGlobalSwipe() {
-            // If swiping down from top (approx)
             if (touchEndY - touchStartY > 50 && touchStartY < 150 && !isQuickSettingsOpen) {
                 toggleQuickSettings(true);
             }
-            // If swiping up and panel is open
             if (touchStartY - touchEndY > 50 && isQuickSettingsOpen) {
                 toggleQuickSettings(false);
             }
@@ -440,23 +443,19 @@
             }
         }
 
-        // --- Camera Tile Swipe Logic ---
         function setupCameraSwipe() {
              const camWidget = document.getElementById('home-camera-widget');
              if(!camWidget) return;
-             
+             camWidget.removeEventListener('touchstart', setupCameraSwipe); // Clean up old listeners
              camWidget.addEventListener('touchstart', e => {
                  touchStartX = e.changedTouches[0].screenX;
-                 e.stopPropagation(); // Prevent bubbling if needed
+                 e.stopPropagation(); 
              }, {passive: true});
-             
              camWidget.addEventListener('touchend', e => {
                  touchEndX = e.changedTouches[0].screenX;
                  handleCameraSwipe();
                  e.stopPropagation();
              }, {passive: true});
-             
-             // Mouse emulation for testing on desktop
              camWidget.addEventListener('mousedown', e => touchStartX = e.screenX);
              camWidget.addEventListener('mouseup', e => {
                  touchEndX = e.screenX;
@@ -468,30 +467,19 @@
             const swipeThreshold = 50;
             const currentIndex = CAMERA_KEYS.indexOf(activeCameraId);
             let nextIndex = currentIndex;
-
-            if (touchStartX - touchEndX > swipeThreshold) {
-                // Swipe Left -> Next Camera
-                nextIndex = (currentIndex + 1) % CAMERA_KEYS.length;
-            } else if (touchEndX - touchStartX > swipeThreshold) {
-                // Swipe Right -> Prev Camera
-                nextIndex = (currentIndex - 1 + CAMERA_KEYS.length) % CAMERA_KEYS.length;
-            }
+            if (touchStartX - touchEndX > swipeThreshold) nextIndex = (currentIndex + 1) % CAMERA_KEYS.length;
+            else if (touchEndX - touchStartX > swipeThreshold) nextIndex = (currentIndex - 1 + CAMERA_KEYS.length) % CAMERA_KEYS.length;
 
             if (nextIndex !== currentIndex) {
                 activeCameraId = CAMERA_KEYS[nextIndex];
-                
-                // Update Home Widget
                 const video = document.querySelector('#home-camera-widget video');
                 const label = document.querySelector('#home-camera-label');
                 if (video) {
                     video.src = CAMERA_FEEDS[activeCameraId].url;
-                    // small fade effect
                     video.style.opacity = 0.5;
                     setTimeout(() => video.style.opacity = 1, 200);
                 }
                 if (label) label.textContent = CAMERA_FEEDS[activeCameraId].name;
-
-                // Also update monitor view if active
                 updateMonitorFeed(activeCameraId);
             }
         }
@@ -508,12 +496,10 @@
                 target.classList.add('animate-fade-in');
                 renderIcons();
             }
-            if (viewId === 'monitor') {
-                updateMonitorFeed(activeCameraId);
-            }
-            if (viewId === 'home') {
-                setTimeout(setupCameraSwipe, 100); // Re-attach listeners
-            }
+            if (viewId === 'monitor') updateMonitorFeed(activeCameraId);
+            if (viewId === 'home') setTimeout(setupCameraSwipe, 100);
+            if (viewId === 'history') renderCalendar(currentCalendarDate);
+            if (viewId === 'settings') renderSettings('general');
         };
 
         const updateMonitorFeed = (cameraId) => {
@@ -550,27 +536,184 @@
             renderIcons();
         };
 
-        const renderHistory = (filter) => {
+        // --- Intercom Logic ---
+        const renderIntercomList = () => {
+            const list = document.getElementById('intercom-unit-list');
+            if(!list) return;
+            list.innerHTML = '';
+            INTERCOM_UNITS.forEach(unit => {
+                const div = document.createElement('div');
+                div.className = 'intercom-unit-item bg-white/5 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 cursor-pointer border border-white/5 hover:border-[var(--color-primary)]';
+                div.onclick = () => startIntercomCall(unit);
+                div.innerHTML = `
+                    <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-[var(--color-primary)]">
+                        <i data-lucide="${unit.icon}" class="w-8 h-8"></i>
+                    </div>
+                    <span class="text-lg font-medium text-center">${translateText(unit.nameKey)}</span>
+                    <div class="text-xs text-green-400 flex items-center gap-1"><div class="w-2 h-2 bg-green-400 rounded-full"></div> ${translateText('connected')}</div>
+                `;
+                list.appendChild(div);
+            });
+            renderIcons();
+        };
+
+        const startIntercomCall = (unit) => {
+            const listContainer = document.getElementById('intercom-list-container');
+            const callContainer = document.getElementById('intercom-call-container');
+            const nameEl = document.getElementById('intercom-call-name');
+            const statusEl = document.getElementById('intercom-call-status');
+            const timerEl = document.getElementById('intercom-call-timer');
+            const avatarEl = document.getElementById('intercom-call-avatar');
+
+            listContainer.classList.add('hidden');
+            callContainer.classList.remove('hidden');
+            
+            nameEl.textContent = translateText(unit.nameKey);
+            statusEl.textContent = translateText('calling');
+            statusEl.classList.remove('text-green-400');
+            timerEl.textContent = "00:00";
+            avatarEl.innerHTML = `<i data-lucide="${unit.icon}" class="w-12 h-12 text-white"></i>`;
+            renderIcons();
+
+            intercomSeconds = 0;
+            // Simulate connection after 2 seconds
+            setTimeout(() => {
+                statusEl.textContent = translateText('connected');
+                statusEl.classList.add('text-green-400');
+                const pulseRing = document.getElementById('call-avatar-ring');
+                if (pulseRing) pulseRing.classList.remove('animate-pulse-ring');
+                intercomCallTimer = setInterval(() => {
+                    intercomSeconds++;
+                    const mins = Math.floor(intercomSeconds / 60).toString().padStart(2, '0');
+                    const secs = (intercomSeconds % 60).toString().padStart(2, '0');
+                    timerEl.textContent = `${mins}:${secs}`;
+                }, 1000);
+            }, 2000);
+        };
+
+        const endIntercomCall = () => {
+            clearInterval(intercomCallTimer);
+            const listContainer = document.getElementById('intercom-list-container');
+            const callContainer = document.getElementById('intercom-call-container');
+            const pulseRing = document.getElementById('call-avatar-ring');
+
+            if (pulseRing) pulseRing.classList.add('animate-pulse-ring');
+            
+            callContainer.classList.add('hidden');
+            listContainer.classList.remove('hidden');
+        };
+
+        // --- History & Calendar Logic ---
+
+        const changeMonth = (direction) => {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
+            renderCalendar(currentCalendarDate);
+        };
+
+        const renderCalendar = (date) => {
+            const calendarContainer = document.getElementById('calendar-container');
+            if (!calendarContainer) return;
+            
+            const monthNames = currentLang === 'ar' ? 
+                ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"] :
+                ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            const dayNames = [
+                translateText('sun'), translateText('mon'), translateText('tue'), translateText('wed'),
+                translateText('thu'), translateText('fri'), translateText('sat')
+            ];
+
+            const today = new Date();
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const firstDay = new Date(year, month, 1).getDay(); // 0 for Sunday
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Header (Month and Year)
+            const header = `
+                <div class="flex justify-between items-center mb-6">
+                    <button onclick="changeMonth(-1)" class="p-2 hover:bg-white/10 rounded-full transition"><i data-lucide="chevron-left" class="w-6 h-6 text-white rtl:rotate-180"></i></button>
+                    <div class="text-2xl font-bold">${monthNames[month]} ${year}</div>
+                    <button onclick="changeMonth(1)" class="p-2 hover:bg-white/10 rounded-full transition"><i data-lucide="chevron-right" class="w-6 h-6 text-white rtl:rotate-180"></i></button>
+                </div>
+            `;
+            
+            // Days of Week
+            let daysOfWeek = `<div class="grid grid-cols-7 text-sm font-semibold text-gray-400 mb-2">`;
+            dayNames.forEach(day => {
+                daysOfWeek += `<div class="text-center">${day.substring(0, 3)}</div>`;
+            });
+            daysOfWeek += `</div>`;
+
+            // Calendar Grid
+            let grid = `<div class="grid grid-cols-7 gap-1">`;
+            
+            // Empty cells for padding
+            for (let i = 0; i < firstDay; i++) {
+                grid += `<div class="calendar-cell disabled text-gray-600"></div>`;
+            }
+
+            // Day cells
+            for (let day = 1; day <= daysInMonth; day++) {
+                const currentDay = new Date(year, month, day);
+                const isToday = currentDay.toDateString() === today.toDateString();
+                const isActive = currentDay.toDateString() === new Date(selectedLogDate).toDateString();
+                
+                let classes = 'calendar-cell text-sm';
+                if (isToday) classes += ' today text-[var(--color-primary)]';
+                if (isActive) classes += ' active-date text-white';
+                if (!isToday && !isActive) classes += ' text-gray-300';
+                
+                grid += `
+                    <div class="${classes}" onclick="selectLogDate('${currentDay.toDateString()}')">
+                        ${day}
+                    </div>
+                `;
+            }
+
+            grid += `</div>`;
+
+            calendarContainer.innerHTML = header + daysOfWeek + grid;
+            renderIcons();
+            renderHistory(document.querySelector('.history-tab.bg-\\[var\\(--color-primary\\]')?.dataset.filter || 'all', selectedLogDate);
+        };
+
+        const selectLogDate = (dateString) => {
+            selectedLogDate = dateString;
+            renderCalendar(new Date(dateString)); // Re-render to highlight selected date
+        };
+
+        const renderHistory = (filter, dateString = selectedLogDate) => {
             const container = document.getElementById('history-list');
             if(!container) return;
+            
+            const filterElement = document.getElementById('history-filter-text');
+            if(filterElement) filterElement.textContent = translateText(filter) + ' ' + (new Date(dateString).toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US', { day: 'numeric', month: 'short' }));
+
+            const logsForDate = MOCK_LOGS.filter(log => log.date === dateString);
+            const filteredLogs = filter === 'all' ? logsForDate : logsForDate.filter(log => log.type === filter);
+            
             container.innerHTML = '';
-            const filteredLogs = filter === 'all' ? MOCK_LOGS : MOCK_LOGS.filter(log => log.type === filter);
+
             if (filteredLogs.length === 0) {
-                container.innerHTML = `<div class="flex flex-col items-center justify-center h-64 text-gray-500"><i data-lucide="inbox" class="w-12 h-12 mb-4 opacity-50"></i><p>${translateText('logs')}</p></div>`;
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-gray-500 py-12">
+                                        <i data-lucide="inbox" class="w-12 h-12 mb-4 opacity-50"></i>
+                                        <p class="text-lg">${translateText('logs')}: ${translateText('noEvents')}</p>
+                                    </div>`;
             } else {
                 filteredLogs.forEach(log => {
                     const el = document.createElement('div');
                     el.className = 'flex items-center p-4 hover:bg-white/5 rounded-xl transition border-b border-white/5 last:border-0';
                     el.innerHTML = `
-                        <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center me-4 ${log.color}">
-                            <i data-lucide="${log.icon}" class="w-6 h-6"></i>
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center me-4 ${log.color}">
+                            <i data-lucide="${log.icon}" class="w-5 h-5"></i>
                         </div>
                         <div class="flex-1">
                             <h4 class="font-medium text-white">${log.title}</h4>
                             <p class="text-sm text-gray-400">${log.source}</p>
                         </div>
                         <div class="text-end">
-                            <p class="text-xs font-semibold text-gray-300">${log.time}</p>
+                            <p class="text-base font-semibold text-gray-300">${log.time}</p>
                         </div>
                     `;
                     container.appendChild(el);
@@ -589,9 +732,9 @@
             });
         };
 
+        // --- Settings Render Functions ---
         const renderSettings = (tabName) => {
             document.querySelectorAll('.settings-menu-item').forEach(btn => {
-                btn.textContent = translateText(btn.dataset.tab);
                 if(btn.dataset.tab === tabName) {
                     btn.classList.add('bg-[var(--color-primary)]', 'text-white');
                     btn.classList.remove('text-gray-400', 'hover:bg-white/5');
@@ -602,27 +745,99 @@
             });
             const contentDiv = document.getElementById('settings-content-area');
             if(!contentDiv) return;
-            let htmlContent = '';
-            // ... (Settings content generation same as before, just ensuring new layout fits)
-            // keeping it concise for this update
-            if(tabName === 'general') {
-                 htmlContent = `<h3 class="text-2xl font-bold mb-6">${translateText('general')}</h3>
-                        <div class="space-y-6 animate-fade-in">
-                            <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
-                                <div><p class="font-medium">${translateText('deviceName')}</p></div>
-                                <span class="text-gray-300 font-mono bg-black/20 px-3 py-1 rounded">Hypnotek Wall Panel 01</span>
+
+            let htmlContent = `<h3 class="text-2xl font-bold mb-8">${translateText(tabName)} ${translateText('settings')}</h3><div class="space-y-6 animate-fade-in">`;
+            
+            switch(tabName) {
+                case 'general':
+                    htmlContent += `
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('deviceName')}</p></div>
+                            <span class="text-gray-300 font-mono bg-black/20 px-3 py-1 rounded">Hypnotek Wall Panel 01</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5 cursor-pointer hover:bg-white/10 transition" onclick="toggleLanguage()">
+                            <div><p class="font-medium">${translateText('language')}</p></div>
+                            <div class="flex items-center gap-2 text-[var(--color-primary)] hover:text-white">
+                                ${currentLang === 'en' ? 'English' : 'العربية'} <i data-lucide="globe" class="w-4 h-4"></i>
                             </div>
-                             <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5 cursor-pointer hover:bg-white/10 transition" onclick="toggleLanguage()">
-                                <div><p class="font-medium">${translateText('language')}</p></div>
-                                <div class="flex items-center gap-2 text-[var(--color-primary)] hover:text-white">
-                                    ${currentLang === 'en' ? 'English' : 'العربية'} <i data-lucide="globe" class="w-4 h-4"></i>
-                                </div>
+                        </div>
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('timezone')}</p></div>
+                            <span class="text-gray-300 font-mono bg-black/20 px-3 py-1 rounded">Asia/Riyadh</span>
+                        </div>
+                    `;
+                    break;
+                case 'network':
+                    htmlContent += `
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('connectionStatus')}</p></div>
+                            <span class="flex items-center gap-2 text-green-400 font-medium"><div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div> ${translateText('connected')} (${translateText('wifi')})</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('ipAddress')}</p></div>
+                            <span class="text-gray-300 font-mono">192.168.1.103</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('gateway')}</p></div>
+                            <span class="text-gray-300 font-mono">192.168.1.1</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('dns')}</p></div>
+                            <span class="text-gray-300 font-mono">8.8.8.8</span>
+                        </div>
+                        <button class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center justify-center gap-2 text-gray-300 font-medium">
+                            <i data-lucide="refresh-ccw" class="w-5 h-5"></i> Scan Wi-Fi Networks
+                        </button>
+                    `;
+                    break;
+                case 'display':
+                    htmlContent += `
+                        <div class="p-4 rounded-2xl bg-white/5">
+                            <p class="font-medium mb-4">${translateText('brightness')}</p>
+                            <div class="flex items-center gap-4">
+                                <i data-lucide="sun-dim" class="w-5 h-5 text-gray-400"></i>
+                                <input type="range" min="20" max="100" value="80" class="flex-grow">
+                                <i data-lucide="sun" class="w-5 h-5 text-yellow-400"></i>
                             </div>
-                        </div>`;
-            } else {
-                // Fallback for other tabs to keep code short, in real app replicate previous logic
-                htmlContent = `<div class="p-8 text-center text-gray-500">${translateText(tabName)} settings content</div>`;
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('screenTimeout')}</p></div>
+                            <select class="settings-input">
+                                <option value="30s">30 Seconds</option>
+                                <option value="1m">1 Minute</option>
+                                <option value="5m">5 Minutes</option>
+                                <option value="always" selected>${translateText('alwaysOn')}</option>
+                            </select>
+                        </div>
+                    `;
+                    break;
+                case 'about':
+                    htmlContent += `
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('softwareVersion')}</p></div>
+                            <span class="text-gray-300 font-mono">V 2.1.4</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('hardwareModel')}</p></div>
+                            <span class="text-gray-300 font-mono">HT-WP-1080</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('serialNumber')}</p></div>
+                            <span class="text-gray-300 font-mono">A9B3-C7D4-E5F6</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
+                            <div><p class="font-medium">${translateText('lastUpdate')}</p></div>
+                            <span class="text-green-400 font-medium">${translateText('upToDate')}</span>
+                        </div>
+                        <button class="w-full py-3 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-accent)] transition flex items-center justify-center gap-2 text-white font-medium">
+                            <i data-lucide="download" class="w-5 h-5"></i> ${translateText('checkUpdate')}
+                        </button>
+                    `;
+                    break;
             }
+            
+            htmlContent += `</div>`;
             contentDiv.innerHTML = htmlContent;
             renderIcons();
         };
@@ -652,8 +867,8 @@
         const simulateCall = () => { isCalling = true; showView('call'); };
         const handleAnswer = () => { isCalling = false; showView('monitor'); updateMonitorFeed('door1'); };
         const handleReject = () => { isCalling = false; showView('home'); };
-
-        // Expose
+        
+        // --- Expose Global Functions ---
         window.showView = showView;
         window.handleUnlock = handleUnlock;
         window.confirmUnlock = confirmUnlock;
@@ -667,6 +882,10 @@
         window.toggleLanguage = toggleLanguage;
         window.toggleQuickSettings = toggleQuickSettings;
         window.setupCameraSwipe = setupCameraSwipe;
+        window.startIntercomCall = startIntercomCall;
+        window.endIntercomCall = endIntercomCall;
+        window.changeMonth = changeMonth;
+        window.selectLogDate = selectLogDate;
     </script>
 </head>
 <body onload="setupCameraSwipe()">
@@ -725,7 +944,7 @@
 
                     <div class="space-y-4">
                         <div class="flex items-center gap-4">
-                            <i data-lucide="sun" class="w-5 h-5 text-gray-400"></i>
+                            <i data-lucide="sun-dim" class="w-5 h-5 text-gray-400"></i>
                             <input type="range" min="0" max="100" value="80" class="flex-grow">
                         </div>
                         <div class="flex items-center gap-4">
@@ -766,7 +985,7 @@
                         <!-- Status Icons -->
                         <div class="flex items-center gap-3 text-white/70 mb-1">
                              <i data-lucide="wifi" class="w-5 h-5"></i>
-                             <i data-lucide="hard-drive" class="w-5 h-5"></i> <!-- SD Card -->
+                             <i data-lucide="hard-drive" class="w-5 h-5"></i> 
                              <i data-lucide="smartphone" class="w-5 h-5"></i>
                         </div>
 
@@ -845,12 +1064,11 @@
                         </div>
                     </div>
 
-                    <!-- Right Column (Updated for removal of title) -->
+                    <!-- Right Column -->
                     <div class="w-2/3 flex flex-col justify-center ps-12 pt-24"> 
-                        <!-- Removed Quick Access Title -->
                         
                         <div class="grid grid-cols-3 gap-6 h-3/4">
-                            <!-- Live View (With Swipe and Fixed Icon) -->
+                            <!-- Live View -->
                             <div id="home-camera-widget" onclick="showView('monitor')" class="smart-tile group col-span-2 row-span-2 !p-0 !bg-black overflow-hidden border-gray-700 relative cursor-grab active:cursor-grabbing">
                                 <div class="absolute inset-0 pointer-events-none">
                                     <video class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500" autoplay loop muted playsinline>
@@ -858,14 +1076,11 @@
                                     </video>
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
                                 </div>
-                                
-                                <!-- Swipe Indicators (Visual Hint) -->
                                 <div class="absolute inset-y-0 left-2 flex items-center opacity-0 group-hover:opacity-50 transition"><i data-lucide="chevron-left" class="w-8 h-8 text-white"></i></div>
                                 <div class="absolute inset-y-0 right-2 flex items-center opacity-0 group-hover:opacity-50 transition"><i data-lucide="chevron-right" class="w-8 h-8 text-white"></i></div>
 
                                 <div class="relative z-10 h-full flex flex-col justify-between p-6 pointer-events-none">
                                     <div class="flex justify-between items-center">
-                                        <!-- Adjusted Eye Icon Size to match LIVE badge -->
                                         <div class="h-6 flex items-center justify-center px-2 bg-black/50 backdrop-blur-sm border border-white/10 text-white rounded">
                                             <i data-lucide="eye" class="w-4 h-4"></i>
                                         </div>
@@ -922,17 +1137,67 @@
                                 </div>
                             </div>
 
-                            <div class="smart-tile group">
+                            <!-- INTERCOM TILE (Replaces Night Mode) -->
+                            <div onclick="showView('intercom')" class="smart-tile group">
                                 <div class="tile-icon">
-                                    <i data-lucide="moon" class="w-6 h-6"></i>
+                                    <i data-lucide="users" class="w-6 h-6"></i>
                                 </div>
                                 <div>
-                                    <p class="text-xs opacity-80 text-gray-400" data-i18n="scene">Scene</p>
-                                    <p class="text-base font-semibold" data-i18n="nightMode">Night Mode</p>
+                                    <p class="text-xs opacity-80 text-gray-400" data-i18n="system">System</p>
+                                    <p class="text-base font-semibold" data-i18n="intercom">Intercom</p>
                                 </div>
                             </div>
 
                         </div>
+                    </div>
+                </div>
+
+                <!-- INTERCOM VIEW (NEW) -->
+                <div id="intercom-view" class="app-view h-full hidden flex flex-col bg-gray-900/90 backdrop-blur-md z-10">
+                    <!-- Header -->
+                    <div class="p-8 border-b border-white/10 flex justify-between items-center bg-black/20">
+                        <div class="flex items-center gap-4">
+                            <button onclick="showView('home')" class="p-2 hover:bg-white/5 rounded-full transition">
+                                <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400 rtl:rotate-180"></i>
+                            </button>
+                            <h2 class="text-2xl font-bold text-white" data-i18n="intercom">Intercom</h2>
+                        </div>
+                    </div>
+
+                    <!-- Unit List Container -->
+                    <div id="intercom-list-container" class="flex-1 p-12 flex flex-col">
+                        <h3 class="text-xl text-gray-400 mb-6" data-i18n="selectUnit">Select Unit</h3>
+                        <div id="intercom-unit-list" class="grid grid-cols-4 gap-6">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Active Call Container (Hidden by default) -->
+                    <div id="intercom-call-container" class="flex-1 hidden flex flex-col items-center justify-center relative">
+                         <div class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/appBg.png')] bg-cover opacity-20 blur-sm"></div>
+                         
+                         <div class="relative z-10 flex flex-col items-center gap-8">
+                             <div id="call-avatar-ring" class="w-32 h-32 rounded-full bg-[var(--color-primary)] flex items-center justify-center shadow-[0_0_40px_rgba(50,181,169,0.4)] animate-pulse-ring">
+                                 <div id="intercom-call-avatar" class="w-24 h-24 rounded-full bg-black/30 flex items-center justify-center">
+                                    <!-- Icon injected by JS -->
+                                 </div>
+                             </div>
+                             
+                             <div class="text-center space-y-2">
+                                 <h2 id="intercom-call-name" class="text-4xl font-bold text-white">Living Room</h2>
+                                 <p id="intercom-call-status" class="text-xl text-gray-300 animate-pulse">Calling...</p>
+                                 <p id="intercom-call-timer" class="text-lg font-mono text-white/60">00:00</p>
+                             </div>
+
+                             <div class="flex gap-8 mt-8">
+                                 <button class="p-6 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition text-white">
+                                     <i data-lucide="mic-off" class="w-8 h-8"></i>
+                                 </button>
+                                 <button onclick="endIntercomCall()" class="p-6 rounded-full bg-red-500 hover:bg-red-600 shadow-lg transition text-white">
+                                     <i data-lucide="phone-off" class="w-8 h-8"></i>
+                                 </button>
+                             </div>
+                         </div>
                     </div>
                 </div>
 
@@ -993,45 +1258,51 @@
                         <div class="w-1/4 bg-black/20 p-6 border-r border-white/10 flex flex-col">
                             <h2 class="text-2xl font-bold mb-8" data-i18n="settings">Settings</h2>
                             <div class="space-y-2 flex-1">
-                                <div onclick="renderSettings('general')" class="settings-menu-item p-3 rounded-xl bg-[var(--color-primary)] text-white font-medium cursor-pointer transition" data-tab="general">General</div>
-                                <div onclick="renderSettings('network')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="network">Network</div>
-                                <div onclick="renderSettings('display')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="display">Display</div>
-                                <div onclick="renderSettings('about')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="about">About</div>
+                                <div onclick="renderSettings('general')" class="settings-menu-item p-3 rounded-xl bg-[var(--color-primary)] text-white font-medium cursor-pointer transition" data-tab="general" data-i18n="general">General</div>
+                                <div onclick="renderSettings('network')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="network" data-i18n="network">Network</div>
+                                <div onclick="renderSettings('display')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="display" data-i18n="display">Display</div>
+                                <div onclick="renderSettings('about')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="about" data-i18n="about">About</div>
                             </div>
                             <button onclick="showView('home')" class="mt-6 flex items-center text-gray-400 hover:text-white">
                                 <i data-lucide="arrow-left" class="w-4 h-4 me-2 rtl:rotate-180"></i> <span data-i18n="backHome">Back to Home</span>
                             </button>
                         </div>
-                        <div id="settings-content-area" class="p-12 w-3/4 overflow-y-auto"></div>
+                        <div id="settings-content-area" class="p-12 w-3/4 overflow-y-auto">
+                            <!-- Content loaded by JS -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- HISTORY VIEW -->
-                <div id="history-view" class="app-view h-full hidden flex flex-col bg-gray-900/90 backdrop-blur-md z-10">
-                    <div class="p-8 border-b border-white/10 flex justify-between items-center bg-black/20">
-                        <div class="flex items-center gap-4">
-                            <button onclick="showView('home')" class="p-2 hover:bg-white/5 rounded-full transition">
-                                <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400 rtl:rotate-180"></i>
-                            </button>
-                            <div>
-                                <h2 class="text-2xl font-bold text-white" data-i18n="activityLogs">Activity Logs</h2>
-                                <!-- Added Search Filters here -->
-                                <div class="flex gap-2 mt-1">
-                                    <input type="date" class="bg-white/10 border border-white/10 rounded text-xs p-1 text-white">
-                                    <input type="time" class="bg-white/10 border border-white/10 rounded text-xs p-1 text-white">
-                                </div>
-                            </div>
-                        </div>
+                <!-- HISTORY VIEW (Redesigned) -->
+                <div id="history-view" class="app-view h-full hidden flex bg-gray-900/90 backdrop-blur-md z-10">
+                    <!-- Left Column: Calendar & Filters -->
+                    <div class="w-1/3 bg-black/20 p-8 border-r border-white/10 flex flex-col">
+                        <button onclick="showView('home')" class="flex items-center text-gray-400 hover:text-white transition mb-6">
+                            <i data-lucide="arrow-left" class="w-5 h-5 me-2 rtl:rotate-180"></i> <span data-i18n="back">Back</span>
+                        </button>
+                        <h2 class="text-2xl font-bold text-white mb-6" data-i18n="calendar">Calendar</h2>
+                        
+                        <!-- Calendar Container (populated by JS) -->
+                        <div id="calendar-container" class="mb-8"></div>
+                        
+                        <h2 class="text-lg font-bold text-white mb-4" data-i18n="quickAccess">Filter Logs</h2>
                         <div class="flex bg-white/5 p-1 rounded-xl">
-                            <button onclick="renderHistory('all')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition bg-[var(--color-primary)] text-white shadow-lg" data-filter="all">All</button>
-                            <button onclick="renderHistory('alert')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="alerts">Alerts</button>
-                            <button onclick="renderHistory('info')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="info">System</button>
-                            <button onclick="renderHistory('call')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="calls">Calls</button>
+                            <button onclick="renderHistory('all')" class="history-tab px-4 py-1 rounded-lg text-sm font-medium transition bg-[var(--color-primary)] text-white shadow-lg" data-filter="all" data-i18n="all">All</button>
+                            <button onclick="renderHistory('alert')" class="history-tab px-4 py-1 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="alerts" data-i18n="alerts">Alerts</button>
+                            <button onclick="renderHistory('info')" class="history-tab px-4 py-1 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="info" data-i18n="info">System</button>
+                            <button onclick="renderHistory('call')" class="history-tab px-4 py-1 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="calls" data-i18n="calls">Calls</button>
                         </div>
                     </div>
-                    <div id="history-list" class="flex-1 overflow-y-auto p-6 space-y-2"></div>
-                    <div class="p-4 border-t border-white/10 bg-black/20 text-center text-xs text-gray-500" data-i18n="displayingRecent">
-                        Displaying recent events from the last 7 days
+
+                    <!-- Right Column: Log List -->
+                    <div class="flex-1 flex flex-col">
+                         <div class="p-8 border-b border-white/10 bg-black/20">
+                            <h2 class="text-2xl font-bold text-white mb-1" data-i18n="activityLogs">Activity Logs</h2>
+                            <p id="history-filter-text" class="text-gray-400 text-lg">All March 14, 2024</p>
+                        </div>
+                        <div id="history-list" class="flex-1 overflow-y-auto p-6 space-y-2">
+                             <!-- Log items populated by JS -->
+                        </div>
                     </div>
                 </div>
 
