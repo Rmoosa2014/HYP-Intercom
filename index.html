@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Fonts: Inter (Latin) & Tajawal (Arabic) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
         /* --- Theming --- */
@@ -36,6 +36,11 @@
             justify-content: center;
         }
 
+        /* Arabic Font Override */
+        html[dir="rtl"] body, html[dir="rtl"] .font-inter {
+            font-family: 'Tajawal', sans-serif;
+        }
+
         /* --- Physical Monitor Frame --- */
         .monitor-frame {
             width: 90vw;
@@ -44,20 +49,18 @@
             background-color: #111;
             border-radius: 24px;
             position: relative;
-            padding: 16px; /* Bezel thickness */
+            padding: 16px; 
             box-shadow: 
-                0 50px 100px -20px rgba(0,0,0,0.7), /* Deep drop shadow */
+                0 50px 100px -20px rgba(0,0,0,0.7), 
                 0 30px 60px -30px rgba(0,0,0,0.5), 
-                inset 0 1px 1px rgba(255,255,255,0.2); /* Bezel lighting */
-            
-            /* Frame Border Detail */
+                inset 0 1px 1px rgba(255,255,255,0.2); 
             border: 1px solid #333;
         }
 
         /* Camera hole simulation */
         .monitor-camera {
             position: absolute;
-            top: 8px; /* Inside the bezel */
+            top: 8px; 
             left: 50%;
             transform: translateX(-50%);
             width: 6px;
@@ -71,15 +74,14 @@
         .monitor-screen {
             width: 100%;
             height: 100%;
-            background-color: #0f172a; /* Fallback color */
-            color: white; /* Ensure all text defaults to white inside the screen */
+            background-color: #0f172a; 
+            color: white; 
             border-radius: 12px;
             overflow: hidden;
             position: relative;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5); /* Inner screen shadow */
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
 
-        /* App Container fits the screen */
         #app-container {
             height: 100%;
             width: 100%;
@@ -92,7 +94,6 @@
             from { opacity: 0; transform: scale(0.98); }
             to { opacity: 1; transform: scale(1); }
         }
-        
         .animate-fade-in {
             animation: fade-in 0.4s ease-out forwards;
         }
@@ -113,15 +114,14 @@
             flex-direction: column;
             align-items: flex-start;
             justify-content: space-between;
-            padding: 1rem; /* Reduced padding from 1.5rem to 1rem */
+            padding: 1rem; 
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1.25rem; /* Slightly tighter radius */
+            border-radius: 1.25rem; 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
             cursor: pointer;
         }
-
         .smart-tile::before {
             content: '';
             position: absolute;
@@ -130,64 +130,56 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-
         .smart-tile:hover {
             transform: translateY(-4px);
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.2);
             box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
         }
-        
-        .smart-tile:hover::before {
-            opacity: 1;
-        }
-
-        .smart-tile:active {
-            transform: scale(0.98);
-        }
-
+        .smart-tile:hover::before { opacity: 1; }
+        .smart-tile:active { transform: scale(0.98); }
         .smart-tile.active {
             background: var(--color-primary);
             border-color: transparent;
             color: white;
         }
-        
-        .smart-tile.active .tile-icon {
-            color: white;
-        }
+        .smart-tile.active .tile-icon { color: white; }
 
         .tile-icon {
-            padding: 0.5rem; /* Reduced from 0.75rem */
+            padding: 0.5rem;
             border-radius: 0.75rem;
             background: rgba(255, 255, 255, 0.1);
             color: var(--color-primary);
             transition: all 0.3s;
         }
-        
         .smart-tile:hover .tile-icon {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
         }
 
-        /* --- Monitor Specifics --- */
         .camera-list-item {
             transition: all 0.2s;
-            border-left: 3px solid transparent;
+            border-left: 3px solid transparent; /* LTR default */
         }
-        .camera-list-item:hover {
-            background: rgba(255,255,255,0.05);
+        /* RTL support for border */
+        html[dir="rtl"] .camera-list-item {
+            border-left: none;
+            border-right: 3px solid transparent;
         }
+        .camera-list-item:hover { background: rgba(255,255,255,0.05); }
+        
         .camera-list-item.active {
             background: linear-gradient(90deg, rgba(50, 181, 169, 0.2) 0%, transparent 100%);
             border-left-color: var(--color-primary);
         }
-
-        /* --- Utility --- */
-        .text-shadow {
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        html[dir="rtl"] .camera-list-item.active {
+             background: linear-gradient(270deg, rgba(50, 181, 169, 0.2) 0%, transparent 100%);
+             border-right-color: var(--color-primary);
+             border-left-color: transparent;
         }
+
+        .text-shadow { text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         
-        /* Scrollbar styling for lists */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
@@ -195,12 +187,106 @@
     </style>
 
     <script>
+        // --- Localization Data ---
+        const TRANSLATIONS = {
+            en: {
+                quickAccess: "Quick Access",
+                locked: "Locked",
+                unlocked: "Unlocked",
+                monitoring: "Monitoring",
+                liveView: "Live View",
+                logs: "Logs",
+                settings: "Settings",
+                scene: "Scene",
+                nightMode: "Night Mode",
+                mainEntrance: "Main Entrance",
+                sideGate: "Side Gate",
+                frontDoor: "Front Door",
+                system: "System",
+                configuration: "Configuration",
+                cameras: "Cameras",
+                back: "Back",
+                systemOnline: "System Online • 4 Cameras",
+                talk: "Talk",
+                decline: "Decline",
+                answer: "Answer",
+                incomingCall: "Incoming Call...",
+                activityLogs: "Activity Logs",
+                recentEvents: "Recent events and notifications",
+                all: "All",
+                alerts: "Alerts",
+                calls: "Calls",
+                info: "System",
+                displayingRecent: "Displaying recent events from the last 7 days",
+                general: "General",
+                network: "Network",
+                display: "Display",
+                about: "About",
+                backHome: "Back to Home",
+                deviceName: "Device Name",
+                language: "Language",
+                doNotDisturb: "Do Not Disturb",
+                timezone: "Timezone",
+                statusArmed: "System Armed",
+                statusSensors: "All sensors active",
+                notifications: "Notifications",
+                newEvents: "New events",
+                mostlySunny: "Mostly Sunny",
+                riyadh: "Riyadh, KSA"
+            },
+            ar: {
+                quickAccess: "الوصول السريع",
+                locked: "مغلق",
+                unlocked: "مفتوح",
+                monitoring: "مراقبة",
+                liveView: "بث مباشر",
+                logs: "السجلات",
+                settings: "الإعدادات",
+                scene: "سيناريو",
+                nightMode: "الوضع الليلي",
+                mainEntrance: "المدخل الرئيسي",
+                sideGate: "البوابة الجانبية",
+                frontDoor: "الباب الأمامي",
+                system: "النظام",
+                configuration: "التكوين",
+                cameras: "الكاميرات",
+                back: "رجوع",
+                systemOnline: "النظام متصل • 4 كاميرات",
+                talk: "تحدث",
+                decline: "رفض",
+                answer: "إجابة",
+                incomingCall: "مكالمة واردة...",
+                activityLogs: "سجل النشاطات",
+                recentEvents: "الأحداث والإشعارات الأخيرة",
+                all: "الكل",
+                alerts: "تنبيهات",
+                calls: "مكالمات",
+                info: "النظام",
+                displayingRecent: "عرض الأحداث من الأيام السبعة الماضية",
+                general: "عام",
+                network: "الشبكة",
+                display: "الشاشة",
+                about: "حول",
+                backHome: "العودة للرئيسية",
+                deviceName: "اسم الجهاز",
+                language: "اللغة",
+                doNotDisturb: "عدم الإزعاج",
+                timezone: "المنطقة الزمنية",
+                statusArmed: "النظام مفعل",
+                statusSensors: "جميع الحساسات نشطة",
+                notifications: "الإشعارات",
+                newEvents: "أحداث جديدة",
+                mostlySunny: "مشمس غالباً",
+                riyadh: "الرياض، السعودية"
+            }
+        };
+
         // State
+        let currentLang = 'en'; // 'en' or 'ar'
         let currentView = 'home';
         let isCalling = false;
         let isMuted = true;
 
-        // Camera Config
         const CAMERA_FEEDS = {
             'door1': { name: 'Main Entrance', url: 'https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/HYP_INTERCOM.mp4' },
             'door2': { name: 'Garage Gate', url: 'https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/Camera2.mp4' },
@@ -209,7 +295,6 @@
         };
         let activeCameraId = 'door1';
 
-        // Mock Data for Logs/Notifications
         const MOCK_LOGS = [
             { id: 1, type: 'alert', title: 'Motion Detected', source: 'Backyard Camera', time: 'Just now', icon: 'footprints', color: 'text-orange-400' },
             { id: 2, type: 'info', title: 'Door Unlocked', source: 'Main Entrance', time: '12 mins ago', icon: 'unlock', color: 'text-green-400' },
@@ -222,47 +307,75 @@
 
         // Utils
         const renderIcons = () => lucide.createIcons();
+        
+        // Helper to get text based on current language
+        // Renamed from 't' to 'translateText' to avoid collision
+        const translateText = (key) => TRANSLATIONS[currentLang][key] || key;
+
+        // Function to Toggle Language
+        const toggleLanguage = () => {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = currentLang;
+            
+            // Update UI Texts
+            updateUITexts();
+            
+            // Re-render views if active
+            renderSettings('general'); 
+            renderHistory('all');
+            updateMonitorList();
+        };
+
+        const updateUITexts = () => {
+            const keys = document.querySelectorAll('[data-i18n]');
+            keys.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = translateText(key);
+            });
+            
+            // Specific Date Update
+            updateTimeAndWeather();
+        };
 
         const updateTimeAndWeather = () => {
             const now = new Date();
-            const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Riyadh' });
+            const locale = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+            const time = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Riyadh' });
             
-            // Format Date: "Friday, 14 March"
             const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Riyadh' };
-            const dateStr = now.toLocaleDateString('en-US', dateOptions);
+            const dateStr = now.toLocaleDateString(locale, dateOptions);
 
             document.querySelectorAll('.live-time').forEach(el => el.textContent = time);
             document.querySelectorAll('.live-date').forEach(el => el.textContent = dateStr);
             
-            // Random mock updates for badges
             const msgCount = document.getElementById('msg-badge');
             if(msgCount) msgCount.textContent = Math.floor(Math.random() * 2) + 1;
         };
 
-        // Core Logic
         document.addEventListener('DOMContentLoaded', () => {
             renderIcons();
             updateTimeAndWeather();
             updateMonitorList();
             updateMuteButton();
-            renderHistory('all'); // Initialize history list
-            renderSettings('general'); // Initialize settings
+            renderHistory('all'); 
+            renderSettings('general'); 
+            updateUITexts(); // Initialize texts
             setInterval(updateTimeAndWeather, 1000);
         });
 
+        // View Switching Logic
         const showView = (viewId) => {
             document.querySelectorAll('.app-view').forEach(view => {
                 view.classList.add('hidden');
                 view.classList.remove('animate-fade-in');
             });
-            
             const target = document.getElementById(viewId + '-view');
             if (target) {
                 target.classList.remove('hidden');
                 target.classList.add('animate-fade-in');
                 renderIcons();
             }
-
             if (viewId === 'monitor') {
                 updateMonitorFeed(activeCameraId);
             }
@@ -271,7 +384,6 @@
         const updateMonitorFeed = (cameraId) => {
             const video = document.getElementById('main-monitor-video');
             const source = document.getElementById('main-monitor-video-source');
-            
             if (video && source && CAMERA_FEEDS[cameraId]) {
                 activeCameraId = cameraId;
                 source.src = CAMERA_FEEDS[cameraId].url;
@@ -284,13 +396,12 @@
         const updateMonitorList = () => {
             const container = document.getElementById('camera-list-container');
             if (!container) return;
-            
             container.innerHTML = '';
             Object.keys(CAMERA_FEEDS).forEach(id => {
                 const cam = CAMERA_FEEDS[id];
                 const isActive = id === activeCameraId;
-                
                 const div = document.createElement('div');
+                // Use ps (padding start) instead of pl
                 div.className = `camera-list-item p-4 cursor-pointer flex items-center justify-between text-sm ${isActive ? 'active text-white font-medium' : 'text-gray-400'}`;
                 div.onclick = () => updateMonitorFeed(id);
                 div.innerHTML = `
@@ -305,48 +416,38 @@
             renderIcons();
         };
 
-        // --- History / Logs Functions ---
+        // History Logic
         const renderHistory = (filter) => {
             const container = document.getElementById('history-list');
             if(!container) return;
-            
             container.innerHTML = '';
-            
-            const filteredLogs = filter === 'all' 
-                ? MOCK_LOGS 
-                : MOCK_LOGS.filter(log => log.type === filter);
-
+            const filteredLogs = filter === 'all' ? MOCK_LOGS : MOCK_LOGS.filter(log => log.type === filter);
             if (filteredLogs.length === 0) {
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-64 text-gray-500">
-                        <i data-lucide="inbox" class="w-12 h-12 mb-4 opacity-50"></i>
-                        <p>No logs found</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-64 text-gray-500"><i data-lucide="inbox" class="w-12 h-12 mb-4 opacity-50"></i><p>${translateText('logs')}</p></div>`;
             } else {
                 filteredLogs.forEach(log => {
                     const el = document.createElement('div');
                     el.className = 'flex items-center p-4 hover:bg-white/5 rounded-xl transition border-b border-white/5 last:border-0';
+                    // Use me-4 (margin end) for icon
                     el.innerHTML = `
-                        <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mr-4 ${log.color}">
+                        <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center me-4 ${log.color}">
                             <i data-lucide="${log.icon}" class="w-6 h-6"></i>
                         </div>
                         <div class="flex-1">
                             <h4 class="font-medium text-white">${log.title}</h4>
                             <p class="text-sm text-gray-400">${log.source}</p>
                         </div>
-                        <div class="text-right">
+                        <div class="text-end">
                             <p class="text-xs font-semibold text-gray-300">${log.time}</p>
-                            <button class="mt-1 text-xs text-[var(--color-primary)] hover:underline">Details</button>
                         </div>
                     `;
                     container.appendChild(el);
                 });
             }
             renderIcons();
-
-            // Update Tab Styles
+            // Update Tabs
             document.querySelectorAll('.history-tab').forEach(tab => {
+                tab.textContent = translateText(tab.dataset.filter);
                 if(tab.dataset.filter === filter) {
                     tab.classList.add('bg-[var(--color-primary)]', 'text-white');
                     tab.classList.remove('text-gray-400', 'hover:text-white');
@@ -357,10 +458,10 @@
             });
         };
 
-        // --- Settings Functions (NEW) ---
+        // Settings Logic
         const renderSettings = (tabName) => {
-            // 1. Update Menu Active State
             document.querySelectorAll('.settings-menu-item').forEach(btn => {
+                btn.textContent = translateText(btn.dataset.tab); // Localize Menu
                 if(btn.dataset.tab === tabName) {
                     btn.classList.add('bg-[var(--color-primary)]', 'text-white');
                     btn.classList.remove('text-gray-400', 'hover:bg-white/5');
@@ -370,46 +471,37 @@
                 }
             });
 
-            // 2. Update Content Area
             const contentDiv = document.getElementById('settings-content-area');
             if(!contentDiv) return;
 
             let htmlContent = '';
 
+            // Helper for language specific arrow
+            const arrowIcon = currentLang === 'ar' ? 'chevron-left' : 'chevron-right';
+
             switch(tabName) {
                 case 'general':
                     htmlContent = `
-                        <h3 class="text-2xl font-bold mb-6">General Configuration</h3>
+                        <h3 class="text-2xl font-bold mb-6">${translateText('general')}</h3>
                         <div class="space-y-6 animate-fade-in">
                             <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
-                                <div>
-                                    <p class="font-medium">Device Name</p>
-                                    <p class="text-sm text-gray-400">Identify this panel in the app</p>
-                                </div>
+                                <div><p class="font-medium">${translateText('deviceName')}</p></div>
                                 <span class="text-gray-300 font-mono bg-black/20 px-3 py-1 rounded">Hypnotek Wall Panel 01</span>
                             </div>
-                            <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
-                                <div>
-                                    <p class="font-medium">Language</p>
-                                    <p class="text-sm text-gray-400">System language</p>
-                                </div>
-                                <div class="flex items-center gap-2 text-gray-300 cursor-pointer hover:text-white">
-                                    English <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5 cursor-pointer hover:bg-white/10 transition" onclick="toggleLanguage()">
+                                <div><p class="font-medium">${translateText('language')}</p></div>
+                                <div class="flex items-center gap-2 text-[var(--color-primary)] hover:text-white">
+                                    ${currentLang === 'en' ? 'English' : 'العربية'} <i data-lucide="globe" class="w-4 h-4"></i>
                                 </div>
                             </div>
                             <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
-                                <div>
-                                    <p class="font-medium">Do Not Disturb</p>
-                                    <p class="text-sm text-gray-400">Silence calls and notifications</p>
-                                </div>
+                                <div><p class="font-medium">${translateText('doNotDisturb')}</p></div>
                                 <div class="w-12 h-6 bg-gray-700 rounded-full relative cursor-pointer transition hover:bg-gray-600">
-                                    <div class="w-4 h-4 bg-white rounded-full absolute top-1 left-1"></div>
+                                    <div class="w-4 h-4 bg-white rounded-full absolute top-1 start-1"></div>
                                 </div>
                             </div>
                             <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
-                                <div>
-                                    <p class="font-medium">Timezone</p>
-                                </div>
+                                <div><p class="font-medium">${translateText('timezone')}</p></div>
                                 <span class="text-gray-300">GMT+03:00 Riyadh</span>
                             </div>
                         </div>
@@ -417,7 +509,7 @@
                     break;
                 case 'network':
                     htmlContent = `
-                        <h3 class="text-2xl font-bold mb-6">Network Settings</h3>
+                        <h3 class="text-2xl font-bold mb-6">${translateText('network')}</h3>
                         <div class="space-y-6 animate-fade-in">
                             <div class="p-6 rounded-2xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 flex items-center gap-4">
                                 <div class="p-3 bg-[var(--color-primary)] rounded-full text-white">
@@ -427,27 +519,19 @@
                                     <p class="font-bold text-lg text-[var(--color-primary)]">Connected</p>
                                     <p class="text-sm text-gray-300">Hypnotek_Office_5G</p>
                                 </div>
-                                <div class="ml-auto text-xs text-gray-400">Signal: Excellent (-42dBm)</div>
+                                <div class="ms-auto text-xs text-gray-400">Signal: Excellent (-42dBm)</div>
                             </div>
-
                             <div class="space-y-1">
-                                <label class="text-xs uppercase tracking-wider text-gray-500 font-semibold ml-2">Details</label>
+                                <label class="text-xs uppercase tracking-wider text-gray-500 font-semibold ms-2">Details</label>
                                 <div class="rounded-2xl bg-white/5 overflow-hidden">
                                     <div class="flex justify-between p-4 border-b border-white/5">
-                                        <span class="text-gray-400">IP Address</span>
-                                        <span class="font-mono text-white">192.168.1.101</span>
+                                        <span class="text-gray-400">IP Address</span><span class="font-mono text-white">192.168.1.101</span>
                                     </div>
                                     <div class="flex justify-between p-4 border-b border-white/5">
-                                        <span class="text-gray-400">Subnet Mask</span>
-                                        <span class="font-mono text-white">255.255.255.0</span>
+                                        <span class="text-gray-400">Subnet Mask</span><span class="font-mono text-white">255.255.255.0</span>
                                     </div>
                                     <div class="flex justify-between p-4 border-b border-white/5">
-                                        <span class="text-gray-400">Router</span>
-                                        <span class="font-mono text-white">192.168.1.1</span>
-                                    </div>
-                                    <div class="flex justify-between p-4">
-                                        <span class="text-gray-400">MAC Address</span>
-                                        <span class="font-mono text-white">00:1B:44:11:3A:B7</span>
+                                        <span class="text-gray-400">Router</span><span class="font-mono text-white">192.168.1.1</span>
                                     </div>
                                 </div>
                             </div>
@@ -456,7 +540,7 @@
                     break;
                 case 'display':
                     htmlContent = `
-                        <h3 class="text-2xl font-bold mb-6">Display & Appearance</h3>
+                        <h3 class="text-2xl font-bold mb-6">${translateText('display')}</h3>
                         <div class="space-y-6 animate-fade-in">
                              <div class="p-4 rounded-2xl bg-white/5">
                                 <div class="flex justify-between mb-2">
@@ -471,24 +555,9 @@
                                     <i data-lucide="sun" class="w-4 h-4"></i>
                                 </div>
                             </div>
-
-                            <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
-                                <div>
-                                    <p class="font-medium">Sleep Timeout</p>
-                                    <p class="text-sm text-gray-400">Turn off screen after inactivity</p>
-                                </div>
-                                <span class="text-gray-300 bg-black/20 px-3 py-1 rounded cursor-pointer">2 min</span>
-                            </div>
-
                              <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5">
-                                <div>
-                                    <p class="font-medium">Theme</p>
-                                    <p class="text-sm text-gray-400">UI Color Preference</p>
-                                </div>
-                                <div class="flex gap-2">
-                                    <div class="w-8 h-8 rounded-full bg-gray-800 border-2 border-white shadow-lg cursor-pointer"></div>
-                                    <div class="w-8 h-8 rounded-full bg-white border border-gray-600 cursor-pointer opacity-50"></div>
-                                </div>
+                                <div><p class="font-medium">Sleep Timeout</p></div>
+                                <span class="text-gray-300 bg-black/20 px-3 py-1 rounded cursor-pointer">2 min</span>
                             </div>
                         </div>
                     `;
@@ -501,38 +570,21 @@
                             </div>
                             <h3 class="text-3xl font-bold mb-1">Hypnotek Pro</h3>
                             <p class="text-gray-400 mb-8">Smart Home Control Panel</p>
-
-                            <div class="w-full rounded-2xl bg-white/5 overflow-hidden text-left">
+                            <div class="w-full rounded-2xl bg-white/5 overflow-hidden text-start">
                                 <div class="flex justify-between p-4 border-b border-white/5">
-                                    <span class="text-gray-400">Model Number</span>
-                                    <span class="text-white">HK-PAD-2024-X</span>
+                                    <span class="text-gray-400">Model</span><span class="text-white">HK-PAD-2024-X</span>
                                 </div>
                                 <div class="flex justify-between p-4 border-b border-white/5">
-                                    <span class="text-gray-400">Software Version</span>
-                                    <span class="text-white text-[var(--color-primary)]">v2.4.1 (Stable)</span>
-                                </div>
-                                <div class="flex justify-between p-4 border-b border-white/5">
-                                    <span class="text-gray-400">Serial Number</span>
-                                    <span class="text-white font-mono">SN:88392011-X</span>
-                                </div>
-                                <div class="flex justify-between p-4">
-                                    <span class="text-gray-400">Manufacturer</span>
-                                    <span class="text-white">Hypnotek Inc.</span>
+                                    <span class="text-gray-400">Version</span><span class="text-white text-[var(--color-primary)]">v2.4.1</span>
                                 </div>
                             </div>
-                            
-                            <button class="mt-8 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition w-full">
-                                Check for Updates
-                            </button>
                         </div>
                     `;
                     break;
             }
-
             contentDiv.innerHTML = htmlContent;
             renderIcons();
         };
-
 
         const toggleMute = () => {
             isMuted = !isMuted;
@@ -540,47 +592,25 @@
             if(video) video.muted = isMuted;
             updateMuteButton();
         };
-
         const updateMuteButton = () => {
             const btn = document.getElementById('mute-btn-icon');
             if(btn) btn.setAttribute('data-lucide', isMuted ? 'volume-x' : 'volume-2');
             renderIcons();
         };
 
-        const handleUnlock = () => {
-            const modal = document.getElementById('unlock-modal');
-            modal.classList.remove('hidden');
-        };
-
+        const handleUnlock = () => { document.getElementById('unlock-modal').classList.remove('hidden'); };
         const confirmUnlock = () => {
             document.getElementById('unlock-modal').classList.add('hidden');
             const toast = document.getElementById('toast-notification');
-            toast.innerHTML = `<i data-lucide="check-circle" class="w-6 h-6 text-green-400 mr-2"></i> Door Unlocked`;
+            toast.innerHTML = `<i data-lucide="check-circle" class="w-6 h-6 text-green-400 me-2"></i> ${translateText('unlocked')}`;
             toast.classList.remove('translate-y-20', 'opacity-0');
             renderIcons();
-            
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
         };
-
         const cancelUnlock = () => document.getElementById('unlock-modal').classList.add('hidden');
-        
-        const simulateCall = () => {
-            isCalling = true;
-            showView('call');
-        };
-
-        const handleAnswer = () => {
-            isCalling = false;
-            showView('monitor');
-            updateMonitorFeed('door1');
-        };
-
-        const handleReject = () => {
-            isCalling = false;
-            showView('home');
-        };
+        const simulateCall = () => { isCalling = true; showView('call'); };
+        const handleAnswer = () => { isCalling = false; showView('monitor'); updateMonitorFeed('door1'); };
+        const handleReject = () => { isCalling = false; showView('home'); };
 
         // Expose
         window.showView = showView;
@@ -593,87 +623,74 @@
         window.toggleMute = toggleMute;
         window.renderHistory = renderHistory;
         window.renderSettings = renderSettings;
+        window.toggleLanguage = toggleLanguage;
     </script>
 </head>
 <body>
 
-    <!-- 
-      PHYSICAL MONITOR WRAPPER 
-      This simulates the physical device sitting on a wall.
-    -->
     <div class="monitor-frame">
-        
-        <!-- Simulated Camera Hole -->
         <div class="monitor-camera"></div>
-
-        <!-- The actual screen display -->
         <div class="monitor-screen">
 
-            <!-- APP CONTENT (Restored from original body) -->
             <div id="app-container" class="relative z-10">
-                
-                <!-- Background Image (Internal App BG - kept for consistency) -->
+                <!-- App Background -->
                 <div class="absolute inset-0 z-0">
                     <img src="https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/appBg.png" 
                         class="w-full h-full object-cover opacity-90" 
                         alt="Smart Home Background">
-                    <!-- Overlay Gradient for readability -->
                     <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
                 </div>
 
-                <!-- Notification Toast (Global) -->
+                <!-- Notification Toast -->
                 <div id="toast-notification" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 glass-panel px-6 py-3 rounded-full flex items-center text-lg font-medium transition-all duration-500 transform translate-y-20 opacity-0">
                     Notification content
                 </div>
 
-                <!-- Modal: Unlock Confirmation -->
+                <!-- Unlock Modal -->
                 <div id="unlock-modal" class="hidden absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
                     <div class="bg-gray-900 border border-gray-700 p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
                         <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
                             <i data-lucide="lock" class="w-8 h-8 text-[var(--color-primary)]"></i>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mb-2">Unlock Main Door?</h3>
-                        <p class="text-gray-400 mb-8">This will allow access to the Villa Entrance.</p>
+                        <h3 class="text-2xl font-bold text-white mb-2" data-i18n="locked">Unlock Main Door?</h3>
+                        <p class="text-gray-400 mb-8">Confirm to unlock the entrance.</p>
                         <div class="flex gap-4">
-                            <button onclick="cancelUnlock()" class="flex-1 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white transition font-medium">Cancel</button>
-                            <button onclick="confirmUnlock()" class="flex-1 py-3 rounded-xl bg-[var(--color-primary)] hover:opacity-90 text-white transition font-medium">Confirm</button>
+                            <button onclick="cancelUnlock()" class="flex-1 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white transition font-medium" data-i18n="decline">Cancel</button>
+                            <button onclick="confirmUnlock()" class="flex-1 py-3 rounded-xl bg-[var(--color-primary)] hover:opacity-90 text-white transition font-medium" data-i18n="unlocked">Confirm</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- VIEW: HOME -->
+                <!-- HOME VIEW -->
                 <div id="home-view" class="app-view h-full flex p-8 lg:p-12 gap-12 animate-fade-in relative z-10">
                     
-                    <!-- HOME NAME BADGE (Top Right) -->
-                    <div class="absolute top-8 right-12 flex items-center gap-3 z-20">
-                        <span class="text-2xl font-light tracking-wide text-right font-serif" style="font-family: system-ui;">بيت أحمد</span>
+                    <!-- HOME NAME BADGE (Absolute, Logical Placement) -->
+                    <div class="absolute top-8 right-12 rtl:right-auto rtl:left-12 flex items-center gap-3 z-20">
+                        <span class="text-2xl font-light tracking-wide font-serif text-white">بيت أحمد</span>
                         <div class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
                             <i data-lucide="home" class="w-6 h-6 text-[var(--color-primary)]"></i>
                         </div>
                     </div>
 
-                    <!-- Left Column: Information & Status -->
+                    <!-- Left Column -->
                     <div class="w-1/3 flex flex-col justify-between py-4">
-                        
-                        <!-- Header Info -->
                         <div>
-                            <div class="flex items-center space-x-2 mb-2 opacity-70">
+                            <div class="flex items-center space-x-2 mb-2 opacity-70 rtl:space-x-reverse">
                                 <i data-lucide="map-pin" class="w-4 h-4"></i>
-                                <span class="text-sm uppercase tracking-widest">Riyadh, KSA</span>
+                                <span class="text-sm uppercase tracking-widest" data-i18n="riyadh">Riyadh, KSA</span>
                             </div>
                             <h1 class="text-7xl font-light tracking-tighter mb-2 live-time text-white text-shadow">12:00</h1>
                             <p class="text-2xl font-light text-gray-300 live-date">Friday, 14 March</p>
                         </div>
 
-                        <!-- Weather Widget -->
                         <div class="glass-panel rounded-3xl p-6 mt-8">
                             <div class="flex justify-between items-end">
                                 <div>
                                     <i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-400 mb-4"></i>
-                                    <p class="text-sm text-gray-400">Mostly Sunny</p>
+                                    <p class="text-sm text-gray-400" data-i18n="mostlySunny">Mostly Sunny</p>
                                     <p class="text-4xl font-medium">27°</p>
                                 </div>
-                                <div class="text-right space-y-2">
+                                <div class="text-end space-y-2">
                                     <div class="flex items-center justify-end gap-2 text-sm text-gray-400">
                                         <i data-lucide="droplets" class="w-4 h-4"></i> 12%
                                     </div>
@@ -684,7 +701,6 @@
                             </div>
                         </div>
 
-                        <!-- Status Pills -->
                         <div class="mt-auto space-y-4">
                             <div class="glass-panel rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition" onclick="simulateCall()">
                                 <div class="flex items-center gap-4">
@@ -692,11 +708,11 @@
                                         <i data-lucide="shield-check" class="w-6 h-6"></i>
                                     </div>
                                     <div>
-                                        <p class="font-medium">System Armed</p>
-                                        <p class="text-xs text-gray-400">All sensors active</p>
+                                        <p class="font-medium" data-i18n="statusArmed">System Armed</p>
+                                        <p class="text-xs text-gray-400" data-i18n="statusSensors">All sensors active</p>
                                     </div>
                                 </div>
-                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500"></i>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500 rtl:rotate-180"></i>
                             </div>
                             
                             <div class="glass-panel rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition" onclick="showView('history')">
@@ -705,25 +721,23 @@
                                         <i data-lucide="bell" class="w-6 h-6"></i>
                                     </div>
                                     <div>
-                                        <p class="font-medium">Notifications</p>
-                                        <p class="text-xs text-gray-400"><span id="msg-badge">2</span> New events</p>
+                                        <p class="font-medium" data-i18n="notifications">Notifications</p>
+                                        <p class="text-xs text-gray-400"><span id="msg-badge">2</span> <span data-i18n="newEvents">New events</span></p>
                                     </div>
                                 </div>
-                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500"></i>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500 rtl:rotate-180"></i>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Column: Control Grid (UPDATED LAYOUT) -->
-                    <div class="w-2/3 flex flex-col justify-center pl-12 pt-16"> <!-- Added pt-16 to clear the name badge -->
-                        <!-- Added text-white to ensure the header is white -->
+                    <!-- Right Column (Using Padding Start for Logic spacing) -->
+                    <div class="w-2/3 flex flex-col justify-center ps-12 pt-16"> 
                         <h2 class="text-2xl font-light mb-6 flex items-center gap-3 text-white">
-                            <span class="w-8 h-[1px] bg-gray-500"></span> Quick Access
+                            <span class="w-8 h-[1px] bg-gray-500"></span> <span data-i18n="quickAccess">Quick Access</span>
                         </h2>
                         
                         <div class="grid grid-cols-3 gap-6 h-3/4">
-                            
-                            <!-- Monitor (Expanded, Playing Video) -->
+                            <!-- Live View -->
                             <div onclick="showView('monitor')" class="smart-tile group col-span-2 row-span-2 !p-0 !bg-black overflow-hidden border-gray-700">
                                 <div class="absolute inset-0">
                                     <video class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500" autoplay loop muted playsinline>
@@ -731,7 +745,6 @@
                                     </video>
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
                                 </div>
-                                
                                 <div class="relative z-10 h-full flex flex-col justify-between p-6">
                                     <div class="flex justify-between items-start">
                                         <div class="tile-icon w-fit bg-black/50 backdrop-blur-sm border border-white/10 text-white">
@@ -740,67 +753,63 @@
                                         <div class="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold animate-pulse">LIVE</div>
                                     </div>
                                     <div>
-                                        <p class="text-sm opacity-80 text-gray-300">Front Door</p>
-                                        <p class="text-xl font-semibold">Monitoring</p>
+                                        <p class="text-sm opacity-80 text-gray-300" data-i18n="frontDoor">Front Door</p>
+                                        <p class="text-base font-semibold" data-i18n="monitoring">Monitoring</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Lock 1 -->
+                            <!-- Tiles (Reduced Text Size: text-base/text-sm) -->
                             <div onclick="handleUnlock()" class="smart-tile active group">
                                 <div class="tile-icon group-hover:text-white">
                                     <i data-lucide="lock" class="w-6 h-6"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm opacity-80">Main Entrance</p>
-                                    <p class="text-lg font-semibold">Locked</p>
+                                    <p class="text-xs opacity-80" data-i18n="mainEntrance">Main Entrance</p>
+                                    <p class="text-base font-semibold" data-i18n="locked">Locked</p>
                                 </div>
-                                <div class="absolute top-4 right-4">
+                                <div class="absolute top-4 right-4 rtl:right-auto rtl:left-4">
                                     <div class="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
                                 </div>
                             </div>
 
-                            <!-- Lock 2 -->
                             <div onclick="handleUnlock()" class="smart-tile group">
                                 <div class="tile-icon">
                                     <i data-lucide="door-open" class="w-6 h-6"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm opacity-80 text-gray-400">Side Gate</p>
-                                    <p class="text-lg font-semibold">Locked</p>
+                                    <p class="text-xs opacity-80 text-gray-400" data-i18n="sideGate">Side Gate</p>
+                                    <p class="text-base font-semibold" data-i18n="locked">Locked</p>
                                 </div>
                             </div>
 
-                            <!-- Logs (Populated) -->
                             <div onclick="showView('history')" class="smart-tile group">
                                 <div class="tile-icon">
                                     <i data-lucide="file-text" class="w-6 h-6"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm opacity-80 text-gray-400">System</p>
-                                    <p class="text-lg font-semibold">Logs</p>
+                                    <p class="text-xs opacity-80 text-gray-400" data-i18n="system">System</p>
+                                    <p class="text-base font-semibold" data-i18n="logs">Logs</p>
                                 </div>
                             </div>
 
-                            <!-- Settings -->
                             <div onclick="showView('settings')" class="smart-tile group">
                                 <div class="tile-icon">
                                     <i data-lucide="sliders" class="w-6 h-6"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm opacity-80 text-gray-400">Configuration</p>
-                                    <p class="text-lg font-semibold">Settings</p>
+                                    <p class="text-xs opacity-80 text-gray-400" data-i18n="configuration">Configuration</p>
+                                    <p class="text-base font-semibold" data-i18n="settings">Settings</p>
                                 </div>
                             </div>
 
-                            <!-- Scenes (Filler for grid) -->
                             <div class="smart-tile group">
                                 <div class="tile-icon">
                                     <i data-lucide="moon" class="w-6 h-6"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm opacity-80 text-gray-400">Scene</p>
-                                    <p class="text-lg font-semibold">Night Mode</p>
+                                    <p class="text-xs opacity-80 text-gray-400" data-i18n="scene">Scene</p>
+                                    <p class="text-base font-semibold" data-i18n="nightMode">Night Mode</p>
                                 </div>
                             </div>
 
@@ -808,32 +817,24 @@
                     </div>
                 </div>
 
-                <!-- VIEW: MONITOR (SIDEBAR NO LONGER A BOX) -->
+                <!-- MONITOR VIEW -->
                 <div id="monitor-view" class="app-view h-full hidden flex bg-gray-900/95 backdrop-blur-3xl relative z-10">
-                    <!-- Sidebar List (Updated Style) -->
-                    <div class="w-80 bg-black/30 border-r border-white/5 flex flex-col z-20">
+                    <!-- Sidebar List (Border logic adjusted via CSS) -->
+                    <div class="w-80 bg-black/30 flex flex-col z-20">
                         <div class="p-6 border-b border-white/5">
                             <button onclick="showView('home')" class="flex items-center text-gray-400 hover:text-white transition mb-6">
-                                <i data-lucide="arrow-left" class="w-5 h-5 mr-2"></i> Back
+                                <i data-lucide="arrow-left" class="w-5 h-5 me-2 rtl:rotate-180"></i> <span data-i18n="back">Back</span>
                             </button>
-                            <h2 class="text-xl font-bold text-white">Cameras</h2>
+                            <h2 class="text-xl font-bold text-white" data-i18n="cameras">Cameras</h2>
                         </div>
-                        <div id="camera-list-container" class="flex-1 overflow-y-auto py-2">
-                            <!-- JS populates this -->
-                        </div>
-                        <div class="p-4 border-t border-white/5 text-center text-xs text-gray-500">
-                            System Online • 4 Cameras
-                        </div>
+                        <div id="camera-list-container" class="flex-1 overflow-y-auto py-2"></div>
+                        <div class="p-4 border-t border-white/5 text-center text-xs text-gray-500" data-i18n="systemOnline">System Online</div>
                     </div>
 
-                    <!-- Main Feed -->
                     <div class="flex-1 relative bg-black flex flex-col">
-                        <div class="absolute top-6 right-6 z-30 flex space-x-3">
+                        <div class="absolute top-6 right-6 rtl:right-auto rtl:left-6 z-30 flex space-x-3 rtl:space-x-reverse">
                             <div class="px-3 py-1 rounded-full bg-red-600/80 text-white text-xs font-bold flex items-center animate-pulse">
-                                <div class="w-2 h-2 bg-white rounded-full mr-2"></div> LIVE
-                            </div>
-                            <div class="px-3 py-1 rounded-full bg-black/50 backdrop-blur text-white text-xs font-mono">
-                                REC
+                                <div class="w-2 h-2 bg-white rounded-full me-2"></div> LIVE
                             </div>
                         </div>
 
@@ -841,25 +842,16 @@
                             <source id="main-monitor-video-source" src="" type="video/mp4">
                         </video>
 
-                        <!-- Overlay Controls -->
                         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-4 rounded-2xl glass-panel">
                             <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white relative group">
                                 <i data-lucide="mic" class="w-6 h-6"></i>
-                                <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Talk</span>
                             </button>
-                            
                             <button onclick="toggleMute()" class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white group">
                                 <i id="mute-btn-icon" data-lucide="volume-x" class="w-6 h-6"></i>
                             </button>
-
                             <button onclick="handleUnlock()" class="p-5 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-accent)] shadow-[0_0_20px_rgba(50,181,169,0.4)] text-white transition transform hover:scale-105">
                                 <i data-lucide="lock-open" class="w-8 h-8"></i>
                             </button>
-
-                            <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
-                                <i data-lucide="camera" class="w-6 h-6"></i>
-                            </button>
-
                             <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
                                 <i data-lucide="phone-off" class="w-6 h-6 text-red-400"></i>
                             </button>
@@ -867,47 +859,41 @@
                     </div>
                 </div>
 
-                <!-- VIEW: INCOMING CALL -->
+                <!-- CALL VIEW -->
                 <div id="call-view" class="app-view h-full hidden relative bg-black z-10">
                     <video class="absolute inset-0 w-full h-full object-cover opacity-60" autoplay loop muted playsinline>
                         <source src="https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/RimLock.mp4" type="video/mp4">
                     </video>
-                    
                     <div class="relative z-10 h-full flex flex-col items-center justify-between py-20">
                         <div class="text-center">
                             <div class="w-24 h-24 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(50,181,169,0.5)] animate-pulse">
                                 <i data-lucide="bell" class="w-10 h-10 text-white"></i>
                             </div>
-                            <h2 class="text-4xl font-light text-white mb-2">Front Door</h2>
-                            <p class="text-xl text-gray-300">Incoming Call...</p>
+                            <h2 class="text-4xl font-light text-white mb-2" data-i18n="frontDoor">Front Door</h2>
+                            <p class="text-xl text-gray-300" data-i18n="incomingCall">Incoming Call...</p>
                         </div>
-
                         <div class="flex items-center gap-12">
                             <button onclick="handleReject()" class="flex flex-col items-center gap-3 group">
                                 <div class="w-20 h-20 rounded-full bg-red-500/90 hover:bg-red-600 flex items-center justify-center transition transform group-hover:scale-110 shadow-lg">
                                     <i data-lucide="phone-off" class="w-8 h-8 text-white"></i>
                                 </div>
-                                <span class="text-sm font-medium uppercase tracking-wider">Decline</span>
+                                <span class="text-sm font-medium uppercase tracking-wider" data-i18n="decline">Decline</span>
                             </button>
-
                             <button onclick="handleAnswer()" class="flex flex-col items-center gap-3 group">
                                 <div class="w-20 h-20 rounded-full bg-green-500/90 hover:bg-green-600 flex items-center justify-center transition transform group-hover:scale-110 shadow-lg">
                                     <i data-lucide="phone" class="w-8 h-8 text-white"></i>
                                 </div>
-                                <span class="text-sm font-medium uppercase tracking-wider">Answer</span>
+                                <span class="text-sm font-medium uppercase tracking-wider" data-i18n="answer">Answer</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- VIEW: SETTINGS (NOW FULL SCREEN, NO INNER FRAME) -->
+                <!-- SETTINGS VIEW -->
                 <div id="settings-view" class="app-view h-full hidden bg-gray-900/90 backdrop-blur-md z-10">
-                    <!-- Removed inner centering and glass-panel styling -->
                     <div class="flex h-full w-full">
-                        
-                        <!-- Settings Sidebar -->
                         <div class="w-1/4 bg-black/20 p-6 border-r border-white/10 flex flex-col">
-                            <h2 class="text-2xl font-bold mb-8">Settings</h2>
+                            <h2 class="text-2xl font-bold mb-8" data-i18n="settings">Settings</h2>
                             <div class="space-y-2 flex-1">
                                 <div onclick="renderSettings('general')" class="settings-menu-item p-3 rounded-xl bg-[var(--color-primary)] text-white font-medium cursor-pointer transition" data-tab="general">General</div>
                                 <div onclick="renderSettings('network')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="network">Network</div>
@@ -915,48 +901,34 @@
                                 <div onclick="renderSettings('about')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="about">About</div>
                             </div>
                             <button onclick="showView('home')" class="mt-6 flex items-center text-gray-400 hover:text-white">
-                                <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to Home
+                                <i data-lucide="arrow-left" class="w-4 h-4 me-2 rtl:rotate-180"></i> <span data-i18n="backHome">Back to Home</span>
                             </button>
                         </div>
-
-                        <!-- Settings Content Area -->
-                        <div id="settings-content-area" class="p-12 w-3/4 overflow-y-auto">
-                            <!-- Content injected via JS -->
-                        </div>
+                        <div id="settings-content-area" class="p-12 w-3/4 overflow-y-auto"></div>
                     </div>
                 </div>
 
-                <!-- VIEW: HISTORY/LOGS (NOW FULL SCREEN, NO INNER FRAME) -->
+                <!-- HISTORY VIEW -->
                 <div id="history-view" class="app-view h-full hidden flex flex-col bg-gray-900/90 backdrop-blur-md z-10">
-                    <!-- Removed floating centering container -->
-                    
-                    <!-- Header (Full Width) -->
                     <div class="p-8 border-b border-white/10 flex justify-between items-center bg-black/20">
                         <div class="flex items-center gap-4">
                             <button onclick="showView('home')" class="p-2 hover:bg-white/5 rounded-full transition">
-                                <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400"></i>
+                                <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400 rtl:rotate-180"></i>
                             </button>
                             <div>
-                                <h2 class="text-2xl font-bold text-white">Activity Logs</h2>
-                                <p class="text-gray-400 text-sm">Recent events and notifications</p>
+                                <h2 class="text-2xl font-bold text-white" data-i18n="activityLogs">Activity Logs</h2>
+                                <p class="text-gray-400 text-sm" data-i18n="recentEvents">Recent events and notifications</p>
                             </div>
                         </div>
-                        
-                        <!-- Tabs -->
                         <div class="flex bg-white/5 p-1 rounded-xl">
                             <button onclick="renderHistory('all')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition bg-[var(--color-primary)] text-white shadow-lg" data-filter="all">All</button>
-                            <button onclick="renderHistory('alert')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="alert">Alerts</button>
+                            <button onclick="renderHistory('alert')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="alerts">Alerts</button>
                             <button onclick="renderHistory('info')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="info">System</button>
-                            <button onclick="renderHistory('call')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="call">Calls</button>
+                            <button onclick="renderHistory('call')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="calls">Calls</button>
                         </div>
                     </div>
-
-                    <!-- Content List (Full Width) -->
-                    <div id="history-list" class="flex-1 overflow-y-auto p-6 space-y-2">
-                        <!-- Populated by JS -->
-                    </div>
-                    
-                    <div class="p-4 border-t border-white/10 bg-black/20 text-center text-xs text-gray-500">
+                    <div id="history-list" class="flex-1 overflow-y-auto p-6 space-y-2"></div>
+                    <div class="p-4 border-t border-white/10 bg-black/20 text-center text-xs text-gray-500" data-i18n="displayingRecent">
                         Displaying recent events from the last 7 days
                     </div>
                 </div>
