@@ -20,18 +20,71 @@
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
+        /* --- Body as the "Wall" --- */
         body, html {
             height: 100%;
             margin: 0;
             overflow: hidden;
             font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: white;
+            /* Background Image for the surrounding space */
+            background-image: url('https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/appBg.png');
+            background-size: cover;
+            background-position: center;
+            /* Center the Monitor */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        /* --- Physical Monitor Frame --- */
+        .monitor-frame {
+            /* Adjust width to simulate a wall panel size. 
+               Using a slightly wider aspect ratio than 7x6 for better UI fit, 
+               but keeping it boxy. */
+            width: 90vw;
+            max-width: 1100px;
+            aspect-ratio: 16/10; 
+            background-color: #111;
+            border-radius: 24px;
+            position: relative;
+            padding: 16px; /* Bezel thickness */
+            box-shadow: 
+                0 50px 100px -20px rgba(0,0,0,0.7), /* Deep drop shadow */
+                0 30px 60px -30px rgba(0,0,0,0.5), 
+                inset 0 1px 1px rgba(255,255,255,0.2); /* Bezel lighting */
+            
+            /* Frame Border Detail */
+            border: 1px solid #333;
+        }
+
+        /* Camera hole simulation */
+        .monitor-camera {
+            position: absolute;
+            top: 8px; /* Inside the bezel */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: #222;
+            border-radius: 50%;
+            box-shadow: inset 0 0 2px rgba(0,0,0,0.8);
+        }
+
+        /* --- The Screen Area --- */
+        .monitor-screen {
+            width: 100%;
+            height: 100%;
+            background-color: #0f172a; /* Fallback color */
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5); /* Inner screen shadow */
+        }
+
+        /* App Container fits the screen */
         #app-container {
-            height: 100vh;
-            width: 100vw;
+            height: 100%;
+            width: 100%;
             position: relative;
             overflow: hidden;
         }
@@ -546,356 +599,371 @@
 </head>
 <body>
 
-    <!-- Background Image (Fixed) -->
-    <div class="fixed inset-0 z-0">
-        <img src="https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/appBg.png" 
-             class="w-full h-full object-cover opacity-90" 
-             alt="Smart Home Background">
-        <!-- Overlay Gradient for readability -->
-        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
-    </div>
-
-    <div id="app-container" class="relative z-10">
+    <!-- 
+      PHYSICAL MONITOR WRAPPER 
+      This simulates the physical device sitting on a wall.
+    -->
+    <div class="monitor-frame">
         
-        <!-- Notification Toast (Global) -->
-        <div id="toast-notification" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 glass-panel px-6 py-3 rounded-full flex items-center text-lg font-medium transition-all duration-500 transform translate-y-20 opacity-0">
-            Notification content
-        </div>
+        <!-- Simulated Camera Hole -->
+        <div class="monitor-camera"></div>
 
-        <!-- Modal: Unlock Confirmation -->
-        <div id="unlock-modal" class="hidden absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-            <div class="bg-gray-900 border border-gray-700 p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
-                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i data-lucide="lock" class="w-8 h-8 text-[var(--color-primary)]"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-2">Unlock Main Door?</h3>
-                <p class="text-gray-400 mb-8">This will allow access to the Villa Entrance.</p>
-                <div class="flex gap-4">
-                    <button onclick="cancelUnlock()" class="flex-1 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white transition font-medium">Cancel</button>
-                    <button onclick="confirmUnlock()" class="flex-1 py-3 rounded-xl bg-[var(--color-primary)] hover:opacity-90 text-white transition font-medium">Confirm</button>
-                </div>
-            </div>
-        </div>
+        <!-- The actual screen display -->
+        <div class="monitor-screen">
 
-        <!-- VIEW: HOME -->
-        <div id="home-view" class="app-view h-full flex p-8 lg:p-12 gap-12 animate-fade-in relative">
-            
-            <!-- HOME NAME BADGE (Top Right) -->
-            <div class="absolute top-8 right-12 flex items-center gap-3 z-20">
-                <span class="text-2xl font-light tracking-wide text-right font-serif" style="font-family: system-ui;">بيت أحمد</span>
-                <div class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
-                     <i data-lucide="home" class="w-6 h-6 text-[var(--color-primary)]"></i>
-                </div>
-            </div>
-
-            <!-- Left Column: Information & Status -->
-            <div class="w-1/3 flex flex-col justify-between py-4">
+            <!-- APP CONTENT (Restored from original body) -->
+            <div id="app-container" class="relative z-10">
                 
-                <!-- Header Info -->
-                <div>
-                    <div class="flex items-center space-x-2 mb-2 opacity-70">
-                        <i data-lucide="map-pin" class="w-4 h-4"></i>
-                        <span class="text-sm uppercase tracking-widest">Riyadh, KSA</span>
-                    </div>
-                    <h1 class="text-7xl font-light tracking-tighter mb-2 live-time text-white text-shadow">12:00</h1>
-                    <p class="text-2xl font-light text-gray-300 live-date">Friday, 14 March</p>
+                <!-- Background Image (Internal App BG - kept for consistency) -->
+                <div class="absolute inset-0 z-0">
+                    <img src="https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/appBg.png" 
+                        class="w-full h-full object-cover opacity-90" 
+                        alt="Smart Home Background">
+                    <!-- Overlay Gradient for readability -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
                 </div>
 
-                <!-- Weather Widget -->
-                <div class="glass-panel rounded-3xl p-6 mt-8">
-                    <div class="flex justify-between items-end">
+                <!-- Notification Toast (Global) -->
+                <div id="toast-notification" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 glass-panel px-6 py-3 rounded-full flex items-center text-lg font-medium transition-all duration-500 transform translate-y-20 opacity-0">
+                    Notification content
+                </div>
+
+                <!-- Modal: Unlock Confirmation -->
+                <div id="unlock-modal" class="hidden absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                    <div class="bg-gray-900 border border-gray-700 p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="lock" class="w-8 h-8 text-[var(--color-primary)]"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Unlock Main Door?</h3>
+                        <p class="text-gray-400 mb-8">This will allow access to the Villa Entrance.</p>
+                        <div class="flex gap-4">
+                            <button onclick="cancelUnlock()" class="flex-1 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white transition font-medium">Cancel</button>
+                            <button onclick="confirmUnlock()" class="flex-1 py-3 rounded-xl bg-[var(--color-primary)] hover:opacity-90 text-white transition font-medium">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: HOME -->
+                <div id="home-view" class="app-view h-full flex p-8 lg:p-12 gap-12 animate-fade-in relative z-10">
+                    
+                    <!-- HOME NAME BADGE (Top Right) -->
+                    <div class="absolute top-8 right-12 flex items-center gap-3 z-20">
+                        <span class="text-2xl font-light tracking-wide text-right font-serif" style="font-family: system-ui;">بيت أحمد</span>
+                        <div class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
+                            <i data-lucide="home" class="w-6 h-6 text-[var(--color-primary)]"></i>
+                        </div>
+                    </div>
+
+                    <!-- Left Column: Information & Status -->
+                    <div class="w-1/3 flex flex-col justify-between py-4">
+                        
+                        <!-- Header Info -->
                         <div>
-                            <i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-400 mb-4"></i>
-                            <p class="text-sm text-gray-400">Mostly Sunny</p>
-                            <p class="text-4xl font-medium">27°</p>
+                            <div class="flex items-center space-x-2 mb-2 opacity-70">
+                                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                                <span class="text-sm uppercase tracking-widest">Riyadh, KSA</span>
+                            </div>
+                            <h1 class="text-7xl font-light tracking-tighter mb-2 live-time text-white text-shadow">12:00</h1>
+                            <p class="text-2xl font-light text-gray-300 live-date">Friday, 14 March</p>
                         </div>
-                        <div class="text-right space-y-2">
-                            <div class="flex items-center justify-end gap-2 text-sm text-gray-400">
-                                <i data-lucide="droplets" class="w-4 h-4"></i> 12%
+
+                        <!-- Weather Widget -->
+                        <div class="glass-panel rounded-3xl p-6 mt-8">
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-400 mb-4"></i>
+                                    <p class="text-sm text-gray-400">Mostly Sunny</p>
+                                    <p class="text-4xl font-medium">27°</p>
+                                </div>
+                                <div class="text-right space-y-2">
+                                    <div class="flex items-center justify-end gap-2 text-sm text-gray-400">
+                                        <i data-lucide="droplets" class="w-4 h-4"></i> 12%
+                                    </div>
+                                    <div class="flex items-center justify-end gap-2 text-sm text-gray-400">
+                                        <i data-lucide="wind" class="w-4 h-4"></i> 8km/h
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex items-center justify-end gap-2 text-sm text-gray-400">
-                                <i data-lucide="wind" class="w-4 h-4"></i> 8km/h
+                        </div>
+
+                        <!-- Status Pills -->
+                        <div class="mt-auto space-y-4">
+                            <div class="glass-panel rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition" onclick="simulateCall()">
+                                <div class="flex items-center gap-4">
+                                    <div class="p-2 bg-green-500/20 rounded-lg text-green-400">
+                                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">System Armed</p>
+                                        <p class="text-xs text-gray-400">All sensors active</p>
+                                    </div>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500"></i>
                             </div>
+                            
+                            <div class="glass-panel rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition" onclick="showView('history')">
+                                <div class="flex items-center gap-4">
+                                    <div class="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+                                        <i data-lucide="bell" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Notifications</p>
+                                        <p class="text-xs text-gray-400"><span id="msg-badge">2</span> New events</p>
+                                    </div>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Control Grid (UPDATED LAYOUT) -->
+                    <div class="w-2/3 flex flex-col justify-center pl-12 pt-16"> <!-- Added pt-16 to clear the name badge -->
+                        <h2 class="text-2xl font-light mb-6 flex items-center gap-3">
+                            <span class="w-8 h-[1px] bg-gray-500"></span> Quick Access
+                        </h2>
+                        
+                        <div class="grid grid-cols-3 gap-6 h-3/4">
+                            
+                            <!-- Monitor (Expanded, Playing Video) -->
+                            <div onclick="showView('monitor')" class="smart-tile group col-span-2 row-span-2 !p-0 !bg-black overflow-hidden border-gray-700">
+                                <div class="absolute inset-0">
+                                    <video class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500" autoplay loop muted playsinline>
+                                        <source src="https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/RimLock.mp4" type="video/mp4">
+                                    </video>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+                                </div>
+                                
+                                <div class="relative z-10 h-full flex flex-col justify-between p-6">
+                                    <div class="flex justify-between items-start">
+                                        <div class="tile-icon w-fit bg-black/50 backdrop-blur-sm border border-white/10 text-white">
+                                            <i data-lucide="eye" class="w-6 h-6"></i>
+                                        </div>
+                                        <div class="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold animate-pulse">LIVE</div>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm opacity-80 text-gray-300">Front Door</p>
+                                        <p class="text-xl font-semibold">Monitoring</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lock 1 -->
+                            <div onclick="handleUnlock()" class="smart-tile active group">
+                                <div class="tile-icon group-hover:text-white">
+                                    <i data-lucide="lock" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm opacity-80">Main Entrance</p>
+                                    <p class="text-xl font-semibold">Locked</p>
+                                </div>
+                                <div class="absolute top-4 right-4">
+                                    <div class="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
+                                </div>
+                            </div>
+
+                            <!-- Lock 2 -->
+                            <div onclick="handleUnlock()" class="smart-tile group">
+                                <div class="tile-icon">
+                                    <i data-lucide="door-open" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm opacity-80 text-gray-400">Side Gate</p>
+                                    <p class="text-xl font-semibold">Locked</p>
+                                </div>
+                            </div>
+
+                            <!-- Logs (Populated) -->
+                            <div onclick="showView('history')" class="smart-tile group">
+                                <div class="tile-icon">
+                                    <i data-lucide="file-text" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm opacity-80 text-gray-400">System</p>
+                                    <p class="text-xl font-semibold">Logs</p>
+                                </div>
+                            </div>
+
+                            <!-- Settings -->
+                            <div onclick="showView('settings')" class="smart-tile group">
+                                <div class="tile-icon">
+                                    <i data-lucide="sliders" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm opacity-80 text-gray-400">Configuration</p>
+                                    <p class="text-xl font-semibold">Settings</p>
+                                </div>
+                            </div>
+
+                            <!-- Scenes (Filler for grid) -->
+                            <div class="smart-tile group">
+                                <div class="tile-icon">
+                                    <i data-lucide="moon" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm opacity-80 text-gray-400">Scene</p>
+                                    <p class="text-xl font-semibold">Night Mode</p>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
 
-                <!-- Status Pills -->
-                <div class="mt-auto space-y-4">
-                    <div class="glass-panel rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition" onclick="simulateCall()">
-                        <div class="flex items-center gap-4">
-                            <div class="p-2 bg-green-500/20 rounded-lg text-green-400">
-                                <i data-lucide="shield-check" class="w-6 h-6"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium">System Armed</p>
-                                <p class="text-xs text-gray-400">All sensors active</p>
-                            </div>
+                <!-- VIEW: MONITOR -->
+                <div id="monitor-view" class="app-view h-full hidden flex bg-gray-900/95 backdrop-blur-3xl relative z-10">
+                    <!-- Sidebar List -->
+                    <div class="w-80 glass-panel border-r border-white/5 flex flex-col z-20">
+                        <div class="p-6 border-b border-white/5">
+                            <button onclick="showView('home')" class="flex items-center text-gray-400 hover:text-white transition mb-6">
+                                <i data-lucide="arrow-left" class="w-5 h-5 mr-2"></i> Back
+                            </button>
+                            <h2 class="text-xl font-bold text-white">Cameras</h2>
                         </div>
-                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500"></i>
+                        <div id="camera-list-container" class="flex-1 overflow-y-auto py-2">
+                            <!-- JS populates this -->
+                        </div>
+                        <div class="p-4 border-t border-white/5 text-center text-xs text-gray-500">
+                            System Online • 4 Cameras
+                        </div>
                     </div>
-                    
-                    <div class="glass-panel rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition" onclick="showView('history')">
-                        <div class="flex items-center gap-4">
-                            <div class="p-2 bg-blue-500/20 rounded-lg text-blue-400">
-                                <i data-lucide="bell" class="w-6 h-6"></i>
+
+                    <!-- Main Feed -->
+                    <div class="flex-1 relative bg-black flex flex-col">
+                        <div class="absolute top-6 right-6 z-30 flex space-x-3">
+                            <div class="px-3 py-1 rounded-full bg-red-600/80 text-white text-xs font-bold flex items-center animate-pulse">
+                                <div class="w-2 h-2 bg-white rounded-full mr-2"></div> LIVE
                             </div>
-                            <div>
-                                <p class="font-medium">Notifications</p>
-                                <p class="text-xs text-gray-400"><span id="msg-badge">2</span> New events</p>
+                            <div class="px-3 py-1 rounded-full bg-black/50 backdrop-blur text-white text-xs font-mono">
+                                REC
                             </div>
                         </div>
-                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-500"></i>
+
+                        <video id="main-monitor-video" class="w-full h-full object-contain bg-black" autoplay loop muted playsinline>
+                            <source id="main-monitor-video-source" src="" type="video/mp4">
+                        </video>
+
+                        <!-- Overlay Controls -->
+                        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-4 rounded-2xl glass-panel">
+                            <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white relative group">
+                                <i data-lucide="mic" class="w-6 h-6"></i>
+                                <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Talk</span>
+                            </button>
+                            
+                            <button onclick="toggleMute()" class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white group">
+                                <i id="mute-btn-icon" data-lucide="volume-x" class="w-6 h-6"></i>
+                            </button>
+
+                            <button onclick="handleUnlock()" class="p-5 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-accent)] shadow-[0_0_20px_rgba(50,181,169,0.4)] text-white transition transform hover:scale-105">
+                                <i data-lucide="lock-open" class="w-8 h-8"></i>
+                            </button>
+
+                            <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
+                                <i data-lucide="camera" class="w-6 h-6"></i>
+                            </button>
+
+                            <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
+                                <i data-lucide="phone-off" class="w-6 h-6 text-red-400"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column: Control Grid (UPDATED LAYOUT) -->
-            <div class="w-2/3 flex flex-col justify-center pl-12 pt-16"> <!-- Added pt-16 to clear the name badge -->
-                <h2 class="text-2xl font-light mb-6 flex items-center gap-3">
-                    <span class="w-8 h-[1px] bg-gray-500"></span> Quick Access
-                </h2>
-                
-                <div class="grid grid-cols-3 gap-6 h-3/4">
+                <!-- VIEW: INCOMING CALL -->
+                <div id="call-view" class="app-view h-full hidden relative bg-black z-10">
+                    <video class="absolute inset-0 w-full h-full object-cover opacity-60" autoplay loop muted playsinline>
+                        <source src="https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/RimLock.mp4" type="video/mp4">
+                    </video>
                     
-                    <!-- Monitor (Expanded, Playing Video) -->
-                    <div onclick="showView('monitor')" class="smart-tile group col-span-2 row-span-2 !p-0 !bg-black overflow-hidden border-gray-700">
-                        <div class="absolute inset-0">
-                             <video class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500" autoplay loop muted playsinline>
-                                <source src="https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/RimLock.mp4" type="video/mp4">
-                             </video>
-                             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+                    <div class="relative z-10 h-full flex flex-col items-center justify-between py-20">
+                        <div class="text-center">
+                            <div class="w-24 h-24 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(50,181,169,0.5)] animate-pulse">
+                                <i data-lucide="bell" class="w-10 h-10 text-white"></i>
+                            </div>
+                            <h2 class="text-4xl font-light text-white mb-2">Front Door</h2>
+                            <p class="text-xl text-gray-300">Incoming Call...</p>
+                        </div>
+
+                        <div class="flex items-center gap-12">
+                            <button onclick="handleReject()" class="flex flex-col items-center gap-3 group">
+                                <div class="w-20 h-20 rounded-full bg-red-500/90 hover:bg-red-600 flex items-center justify-center transition transform group-hover:scale-110 shadow-lg">
+                                    <i data-lucide="phone-off" class="w-8 h-8 text-white"></i>
+                                </div>
+                                <span class="text-sm font-medium uppercase tracking-wider">Decline</span>
+                            </button>
+
+                            <button onclick="handleAnswer()" class="flex flex-col items-center gap-3 group">
+                                <div class="w-20 h-20 rounded-full bg-green-500/90 hover:bg-green-600 flex items-center justify-center transition transform group-hover:scale-110 shadow-lg">
+                                    <i data-lucide="phone" class="w-8 h-8 text-white"></i>
+                                </div>
+                                <span class="text-sm font-medium uppercase tracking-wider">Answer</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: SETTINGS (FULLY FUNCTIONAL) -->
+                <div id="settings-view" class="app-view h-full hidden flex items-center justify-center bg-gray-900/90 backdrop-blur-md z-10">
+                    <div class="w-3/4 h-3/4 glass-panel rounded-3xl flex overflow-hidden">
+                        
+                        <!-- Settings Sidebar -->
+                        <div class="w-1/4 bg-black/20 p-6 border-r border-white/10 flex flex-col">
+                            <h2 class="text-2xl font-bold mb-8">Settings</h2>
+                            <div class="space-y-2 flex-1">
+                                <div onclick="renderSettings('general')" class="settings-menu-item p-3 rounded-xl bg-[var(--color-primary)] text-white font-medium cursor-pointer transition" data-tab="general">General</div>
+                                <div onclick="renderSettings('network')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="network">Network</div>
+                                <div onclick="renderSettings('display')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="display">Display</div>
+                                <div onclick="renderSettings('about')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="about">About</div>
+                            </div>
+                            <button onclick="showView('home')" class="mt-6 flex items-center text-gray-400 hover:text-white">
+                                <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to Home
+                            </button>
+                        </div>
+
+                        <!-- Settings Content Area -->
+                        <div id="settings-content-area" class="p-12 w-3/4 overflow-y-auto">
+                            <!-- Content injected via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: HISTORY/LOGS (Populated) -->
+                <div id="history-view" class="app-view h-full hidden flex items-center justify-center bg-gray-900/90 backdrop-blur-md p-8 z-10">
+                    <div class="w-full max-w-4xl h-[80vh] glass-panel rounded-3xl flex flex-col overflow-hidden">
+                        
+                        <!-- Header -->
+                        <div class="p-8 border-b border-white/10 flex justify-between items-center bg-black/20">
+                            <div class="flex items-center gap-4">
+                                <button onclick="showView('home')" class="p-2 hover:bg-white/5 rounded-full transition">
+                                    <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400"></i>
+                                </button>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-white">Activity Logs</h2>
+                                    <p class="text-gray-400 text-sm">Recent events and notifications</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Tabs -->
+                            <div class="flex bg-white/5 p-1 rounded-xl">
+                                <button onclick="renderHistory('all')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition bg-[var(--color-primary)] text-white shadow-lg" data-filter="all">All</button>
+                                <button onclick="renderHistory('alert')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="alert">Alerts</button>
+                                <button onclick="renderHistory('info')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="info">System</button>
+                                <button onclick="renderHistory('call')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="call">Calls</button>
+                            </div>
+                        </div>
+
+                        <!-- Content List -->
+                        <div id="history-list" class="flex-1 overflow-y-auto p-6 space-y-2">
+                            <!-- Populated by JS -->
                         </div>
                         
-                        <div class="relative z-10 h-full flex flex-col justify-between p-6">
-                            <div class="flex justify-between items-start">
-                                <div class="tile-icon w-fit bg-black/50 backdrop-blur-sm border border-white/10 text-white">
-                                    <i data-lucide="eye" class="w-6 h-6"></i>
-                                </div>
-                                <div class="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold animate-pulse">LIVE</div>
-                            </div>
-                            <div>
-                                <p class="text-sm opacity-80 text-gray-300">Front Door</p>
-                                <p class="text-xl font-semibold">Monitoring</p>
-                            </div>
+                        <div class="p-4 border-t border-white/10 bg-black/20 text-center text-xs text-gray-500">
+                            Displaying recent events from the last 7 days
                         </div>
                     </div>
-
-                    <!-- Lock 1 -->
-                    <div onclick="handleUnlock()" class="smart-tile active group">
-                        <div class="tile-icon group-hover:text-white">
-                            <i data-lucide="lock" class="w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm opacity-80">Main Entrance</p>
-                            <p class="text-xl font-semibold">Locked</p>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <div class="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
-                        </div>
-                    </div>
-
-                    <!-- Lock 2 -->
-                    <div onclick="handleUnlock()" class="smart-tile group">
-                        <div class="tile-icon">
-                            <i data-lucide="door-open" class="w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm opacity-80 text-gray-400">Side Gate</p>
-                            <p class="text-xl font-semibold">Locked</p>
-                        </div>
-                    </div>
-
-                    <!-- Logs (Populated) -->
-                    <div onclick="showView('history')" class="smart-tile group">
-                        <div class="tile-icon">
-                            <i data-lucide="file-text" class="w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm opacity-80 text-gray-400">System</p>
-                            <p class="text-xl font-semibold">Logs</p>
-                        </div>
-                    </div>
-
-                    <!-- Settings -->
-                    <div onclick="showView('settings')" class="smart-tile group">
-                        <div class="tile-icon">
-                            <i data-lucide="sliders" class="w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm opacity-80 text-gray-400">Configuration</p>
-                            <p class="text-xl font-semibold">Settings</p>
-                        </div>
-                    </div>
-
-                    <!-- Scenes (Filler for grid) -->
-                    <div class="smart-tile group">
-                        <div class="tile-icon">
-                            <i data-lucide="moon" class="w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm opacity-80 text-gray-400">Scene</p>
-                            <p class="text-xl font-semibold">Night Mode</p>
-                        </div>
-                    </div>
-
                 </div>
+
             </div>
         </div>
-
-        <!-- VIEW: MONITOR -->
-        <div id="monitor-view" class="app-view h-full hidden flex bg-gray-900/95 backdrop-blur-3xl">
-            <!-- Sidebar List -->
-            <div class="w-80 glass-panel border-r border-white/5 flex flex-col z-20">
-                <div class="p-6 border-b border-white/5">
-                    <button onclick="showView('home')" class="flex items-center text-gray-400 hover:text-white transition mb-6">
-                        <i data-lucide="arrow-left" class="w-5 h-5 mr-2"></i> Back
-                    </button>
-                    <h2 class="text-xl font-bold text-white">Cameras</h2>
-                </div>
-                <div id="camera-list-container" class="flex-1 overflow-y-auto py-2">
-                    <!-- JS populates this -->
-                </div>
-                <div class="p-4 border-t border-white/5 text-center text-xs text-gray-500">
-                    System Online • 4 Cameras
-                </div>
-            </div>
-
-            <!-- Main Feed -->
-            <div class="flex-1 relative bg-black flex flex-col">
-                <div class="absolute top-6 right-6 z-30 flex space-x-3">
-                    <div class="px-3 py-1 rounded-full bg-red-600/80 text-white text-xs font-bold flex items-center animate-pulse">
-                        <div class="w-2 h-2 bg-white rounded-full mr-2"></div> LIVE
-                    </div>
-                    <div class="px-3 py-1 rounded-full bg-black/50 backdrop-blur text-white text-xs font-mono">
-                        REC
-                    </div>
-                </div>
-
-                <video id="main-monitor-video" class="w-full h-full object-contain bg-black" autoplay loop muted playsinline>
-                    <source id="main-monitor-video-source" src="" type="video/mp4">
-                </video>
-
-                <!-- Overlay Controls -->
-                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-4 rounded-2xl glass-panel">
-                    <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white relative group">
-                        <i data-lucide="mic" class="w-6 h-6"></i>
-                        <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Talk</span>
-                    </button>
-                    
-                    <button onclick="toggleMute()" class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white group">
-                        <i id="mute-btn-icon" data-lucide="volume-x" class="w-6 h-6"></i>
-                    </button>
-
-                    <button onclick="handleUnlock()" class="p-5 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-accent)] shadow-[0_0_20px_rgba(50,181,169,0.4)] text-white transition transform hover:scale-105">
-                        <i data-lucide="lock-open" class="w-8 h-8"></i>
-                    </button>
-
-                    <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
-                        <i data-lucide="camera" class="w-6 h-6"></i>
-                    </button>
-
-                    <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
-                        <i data-lucide="phone-off" class="w-6 h-6 text-red-400"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: INCOMING CALL -->
-        <div id="call-view" class="app-view h-full hidden relative bg-black">
-            <video class="absolute inset-0 w-full h-full object-cover opacity-60" autoplay loop muted playsinline>
-                <source src="https://raw.githubusercontent.com/Rmoosa2014/vr-tour/main/RimLock.mp4" type="video/mp4">
-            </video>
-            
-            <div class="relative z-10 h-full flex flex-col items-center justify-between py-20">
-                <div class="text-center">
-                    <div class="w-24 h-24 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(50,181,169,0.5)] animate-pulse">
-                        <i data-lucide="bell" class="w-10 h-10 text-white"></i>
-                    </div>
-                    <h2 class="text-4xl font-light text-white mb-2">Front Door</h2>
-                    <p class="text-xl text-gray-300">Incoming Call...</p>
-                </div>
-
-                <div class="flex items-center gap-12">
-                    <button onclick="handleReject()" class="flex flex-col items-center gap-3 group">
-                        <div class="w-20 h-20 rounded-full bg-red-500/90 hover:bg-red-600 flex items-center justify-center transition transform group-hover:scale-110 shadow-lg">
-                            <i data-lucide="phone-off" class="w-8 h-8 text-white"></i>
-                        </div>
-                        <span class="text-sm font-medium uppercase tracking-wider">Decline</span>
-                    </button>
-
-                    <button onclick="handleAnswer()" class="flex flex-col items-center gap-3 group">
-                        <div class="w-20 h-20 rounded-full bg-green-500/90 hover:bg-green-600 flex items-center justify-center transition transform group-hover:scale-110 shadow-lg">
-                            <i data-lucide="phone" class="w-8 h-8 text-white"></i>
-                        </div>
-                        <span class="text-sm font-medium uppercase tracking-wider">Answer</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: SETTINGS (FULLY FUNCTIONAL) -->
-        <div id="settings-view" class="app-view h-full hidden flex items-center justify-center bg-gray-900/90 backdrop-blur-md">
-            <div class="w-3/4 h-3/4 glass-panel rounded-3xl flex overflow-hidden">
-                
-                <!-- Settings Sidebar -->
-                <div class="w-1/4 bg-black/20 p-6 border-r border-white/10 flex flex-col">
-                    <h2 class="text-2xl font-bold mb-8">Settings</h2>
-                    <div class="space-y-2 flex-1">
-                        <div onclick="renderSettings('general')" class="settings-menu-item p-3 rounded-xl bg-[var(--color-primary)] text-white font-medium cursor-pointer transition" data-tab="general">General</div>
-                        <div onclick="renderSettings('network')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="network">Network</div>
-                        <div onclick="renderSettings('display')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="display">Display</div>
-                        <div onclick="renderSettings('about')" class="settings-menu-item p-3 rounded-xl hover:bg-white/5 text-gray-400 cursor-pointer transition" data-tab="about">About</div>
-                    </div>
-                    <button onclick="showView('home')" class="mt-6 flex items-center text-gray-400 hover:text-white">
-                        <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to Home
-                    </button>
-                </div>
-
-                <!-- Settings Content Area -->
-                <div id="settings-content-area" class="p-12 w-3/4 overflow-y-auto">
-                    <!-- Content injected via JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: HISTORY/LOGS (Populated) -->
-        <div id="history-view" class="app-view h-full hidden flex items-center justify-center bg-gray-900/90 backdrop-blur-md p-8">
-            <div class="w-full max-w-4xl h-[80vh] glass-panel rounded-3xl flex flex-col overflow-hidden">
-                
-                <!-- Header -->
-                <div class="p-8 border-b border-white/10 flex justify-between items-center bg-black/20">
-                    <div class="flex items-center gap-4">
-                        <button onclick="showView('home')" class="p-2 hover:bg-white/5 rounded-full transition">
-                            <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400"></i>
-                        </button>
-                        <div>
-                            <h2 class="text-2xl font-bold text-white">Activity Logs</h2>
-                            <p class="text-gray-400 text-sm">Recent events and notifications</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Tabs -->
-                    <div class="flex bg-white/5 p-1 rounded-xl">
-                        <button onclick="renderHistory('all')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition bg-[var(--color-primary)] text-white shadow-lg" data-filter="all">All</button>
-                        <button onclick="renderHistory('alert')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="alert">Alerts</button>
-                        <button onclick="renderHistory('info')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="info">System</button>
-                        <button onclick="renderHistory('call')" class="history-tab px-6 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white" data-filter="call">Calls</button>
-                    </div>
-                </div>
-
-                <!-- Content List -->
-                <div id="history-list" class="flex-1 overflow-y-auto p-6 space-y-2">
-                    <!-- Populated by JS -->
-                </div>
-                
-                <div class="p-4 border-t border-white/10 bg-black/20 text-center text-xs text-gray-500">
-                    Displaying recent events from the last 7 days
-                </div>
-            </div>
-        </div>
-
     </div>
 
 </body>
