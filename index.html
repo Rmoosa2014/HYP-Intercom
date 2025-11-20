@@ -756,6 +756,7 @@
                             <span class="text-gray-300 font-mono bg-black/20 px-3 py-1 rounded">Hypnotek Wall Panel 01</span>
                         </div>
                         <div class="flex justify-between items-center p-4 rounded-2xl bg-white/5 cursor-pointer hover:bg-white/10 transition" onclick="toggleLanguage()">
+                        
                             <div><p class="font-medium">${translateText('language')}</p></div>
                             <div class="flex items-center gap-2 text-[var(--color-primary)] hover:text-white">
                                 ${currentLang === 'en' ? 'English' : 'العربية'} <i data-lucide="globe" class="w-4 h-4"></i>
@@ -1029,13 +1030,12 @@
 
                     <!-- Left Column -->
                     <div class="w-1/3 flex flex-col justify-between py-4">
-                        <div>
-                            <div class="flex items-center space-x-2 mb-2 opacity-70 rtl:space-x-reverse">
+    <div class="mt-5"> <div class="flex items-center space-x-2 mb-2 opacity-70 rtl:space-x-reverse">
                                 <i data-lucide="map-pin" class="w-4 h-4"></i>
                                 <span class="text-sm uppercase tracking-widest" data-i18n="riyadh">Riyadh, KSA</span>
                             </div>
                             <h1 class="text-7xl font-light tracking-tighter mb-2 live-time text-white text-shadow">12:00</h1>
-                            <p class="text-2xl font-light text-gray-300 live-date">Friday, 14 March</p>
+                            <p class="text-1.3xl font-light text-gray-300 live-date">Friday, 14 March</p>
                         </div>
 
                         <div class="glass-panel rounded-3xl p-6 mt-8">
