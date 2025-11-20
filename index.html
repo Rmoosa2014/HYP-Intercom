@@ -853,6 +853,23 @@
             if(btn) btn.setAttribute('data-lucide', isMuted ? 'volume-x' : 'volume-2');
             renderIcons();
         };
+      const takeSnapshot = () => {
+    const toast = document.getElementById('toast-notification');
+    // Assuming CAMERA_FEEDS and activeCameraId are defined
+    const currentCameraName = CAMERA_FEEDS[activeCameraId].name; 
+    
+    // Set the toast message
+    toast.innerHTML = `<i data-lucide="camera" class="w-6 h-6 text-[var(--color-primary)] me-2"></i> Snapshot taken from ${currentCameraName}!`;
+    
+    // Show the toast
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    renderIcons();
+    
+    // Hide the toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+    }, 3000);
+};
 
         const handleUnlock = () => { document.getElementById('unlock-modal').classList.remove('hidden'); };
         const confirmUnlock = () => {
@@ -886,6 +903,7 @@
         window.endIntercomCall = endIntercomCall;
         window.changeMonth = changeMonth;
         window.selectLogDate = selectLogDate;
+      window.takeSnapshot = takeSnapshot;
     </script>
 </head>
 <body onload="setupCameraSwipe()">
@@ -980,22 +998,25 @@
                 <!-- HOME VIEW -->
                 <div id="home-view" class="app-view h-full flex p-8 lg:p-12 gap-12 animate-fade-in relative z-10">
                     
-                    <!-- TOP STATUS BAR & HOME NAME -->
+                    <!-- TOP LEFT STATUS (MOVED HERE) -->
+                    <div class="absolute top-8 left-12 rtl:left-auto rtl:right-12 z-20">
+                         <!-- Language Toggle -->
+                         <button onclick="toggleLanguage()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition text-white group cursor-pointer">
+                            <i data-lucide="globe" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                            <span id="home-lang-text" class="text-sm font-medium">العربية</span>
+                        </button>
+                    </div>
+
+                    <!-- TOP RIGHT STATUS BAR & HOME NAME -->
                     <div class="absolute top-8 right-12 rtl:right-auto rtl:left-12 flex flex-col items-end rtl:items-start gap-2 z-20">
                         <!-- Status Icons -->
-                        <div class="flex items-center gap-3 text-white/70 mb-1">
+                        <div class="flex items-center gap-3 text-white/70 mb-1 h-10">
                              <i data-lucide="wifi" class="w-5 h-5"></i>
                              <i data-lucide="hard-drive" class="w-5 h-5"></i> 
                              <i data-lucide="smartphone" class="w-5 h-5"></i>
                         </div>
 
                         <div class="flex items-center gap-6">
-                            <!-- Language Toggle -->
-                            <button onclick="toggleLanguage()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition text-white group cursor-pointer">
-                                <i data-lucide="globe" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
-                                <span id="home-lang-text" class="text-sm font-medium">العربية</span>
-                            </button>
-
                             <!-- Home Name Badge -->
                             <div class="flex items-center gap-3">
                                 <span class="text-2xl font-light tracking-wide font-serif text-white">بيت أحمد</span>
@@ -1217,13 +1238,29 @@
                         <video id="main-monitor-video" class="w-full h-full object-contain bg-black" autoplay loop muted playsinline>
                             <source id="main-monitor-video-source" src="" type="video/mp4">
                         </video>
-                        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-4 rounded-2xl glass-panel">
-                            <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white relative group"><i data-lucide="mic" class="w-6 h-6"></i></button>
-                            <button onclick="toggleMute()" class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white group"><i id="mute-btn-icon" data-lucide="volume-x" class="w-6 h-6"></i></button>
-                            <button onclick="handleUnlock()" class="p-5 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-accent)] shadow-[0_0_20px_rgba(50,181,169,0.4)] text-white transition transform hover:scale-105"><i data-lucide="lock-open" class="w-8 h-8"></i></button>
-                            <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white"><i data-lucide="phone-off" class="w-6 h-6 text-red-400"></i></button>
-                        </div>
-                    </div>
+                        <div class="flex justify-center mb-8">
+            <div class="flex items-center gap-6 glass-panel p-3 rounded-full">
+               <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
+                    <i data-lucide="mic" class="w-6 h-6"></i>
+                </button>
+                <button onclick="toggleMute()" class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white group">
+                    <i id="mute-btn-icon" data-lucide="volume-x" class="w-6 h-6"></i>
+                </button>
+                
+                <button onclick="takeSnapshot()" class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white group">
+                    <i data-lucide="camera" class="w-6 h-6"></i>
+                </button>
+                
+                <button onclick="handleUnlock()" class="p-5 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-accent)] shadow-[0_0_20px_rgba(50,181,169,0.4)] text-white transition transform hover:scale-105">
+                    <i data-lucide="lock-open" class="w-8 h-8"></i>
+                </button>
+                
+                               
+                <button class="p-4 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
+                    <i data-lucide="phone-off" class="w-6 h-6 text-red-400"></i>
+                </button>
+            </div>
+        </div>
                 </div>
 
                 <!-- CALL VIEW -->
